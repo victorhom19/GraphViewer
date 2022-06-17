@@ -1,5 +1,4 @@
-import python_ast
-import python_cfg
+from server.python import python_ast, python_cfg
 
 
 def handler(code: str, model: str):

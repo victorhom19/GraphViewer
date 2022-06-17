@@ -1,11 +1,11 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import StreamingResponse, Response, FileResponse
-from fastapi.staticfiles import StaticFiles
 from enum import Enum
-import uvicorn
 
-from python import handler as py_handler
-from python import python_ast, python_cfg
+import uvicorn
+from fastapi import FastAPI, Request
+from fastapi.responses import StreamingResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
+
+from server.python import python_ast, python_cfg
 
 app = FastAPI()
 
