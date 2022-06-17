@@ -18,7 +18,7 @@ python ./src/app.py
 pip install virualenv
 virtualenv venv # создание среды
 ./venv/Scripts/activate.bat # windows
-sourse venv/bin/activate # mac, linux
+source venv/bin/activate # mac, linux
 pip install -r requirements.txt 
 python ./src/app.py
 ```
