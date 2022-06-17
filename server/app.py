@@ -1,10 +1,11 @@
-from fastapi import FastAPI
-from fastapi.responses import StreamingResponse, Response
+from fastapi import FastAPI, Request
+from fastapi.responses import StreamingResponse, Response, FileResponse
+from fastapi.staticfiles import StaticFiles
 from enum import Enum
 import uvicorn
 
-import python_ast
-import python_cfg
+import python.python_ast as python_ast
+import python.python_cfg as python_cfg
 
 app = FastAPI()
 
@@ -26,15 +27,28 @@ else:
 print('exit')
 """
 
+app = FastAPI()
+app.mount("/client", StaticFiles(directory="../client"), name="client")
+
+
+@app.get("/")
+async def root(request: Request):
+    return FileResponse('../client/views/index.html')
+
+
+@app.get("/save")
+async def save(request: Request):
+    pass
+
 
 @app.get('/python_ast', response_class=StreamingResponse)
-def ast(format: Format, code: str = example_code):
+async def ast(format: Format, code: str = example_code):
     data = python_ast.make(code, format=format.name)
     return StreamingResponse(data, media_type=format.value)
 
 
 @app.get('/python_cfg')
-def cfg(code: str = example_code):
+async def cfg(code: str = example_code):    
     data = python_cfg.make(code)
     return StreamingResponse(data, media_type=f"text/dot")
 
