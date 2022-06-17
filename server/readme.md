@@ -11,7 +11,7 @@
 pip install pipenv
 pipenv shell
 pipenv install
-python ./src/app.py
+python ./app.py
 ```
 ## Запуск через virtualenv
 ```bash
@@ -20,6 +20,6 @@ virtualenv venv # создание среды
 ./venv/Scripts/activate.bat # windows
 source venv/bin/activate # mac, linux
 pip install -r requirements.txt 
-python ./src/app.py
+python ./app.py
 ```
 ### По адресу `http://localhost:8000/docs` можно получить доcтуп к интерактивному api сервера.
