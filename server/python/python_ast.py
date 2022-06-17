@@ -59,7 +59,6 @@ class GraphRenderer:
     _graph = None
     _rendered_nodes = None
 
-
     @staticmethod
     def _escape_dot_label(str):
         return str.replace("\\", "\\\\").replace("|", "\\|").replace("<", "\\<").replace(">", "\\>")
@@ -101,7 +100,7 @@ class GraphRenderer:
         graphattrs = self.graphattrs.copy()
         if label is not None:
             graphattrs['label'] = self._escape_dot_label(label)
-        graph = gv.Digraph(graph_attr = graphattrs, node_attr = self.nodeattrs, edge_attr = self.edgeattrs)
+        graph = gv.Digraph(graph_attr=graphattrs, node_attr=self.nodeattrs, edge_attr=self.edgeattrs)
 
         # recursively draw all the nodes and edges
         self._graph = graph

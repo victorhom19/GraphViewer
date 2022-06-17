@@ -4,8 +4,8 @@ from fastapi.staticfiles import StaticFiles
 from enum import Enum
 import uvicorn
 
-import python.python_ast as python_ast
-import python.python_cfg as python_cfg
+from python import handler as py_handler
+from python import python_ast, python_cfg
 
 app = FastAPI()
 
@@ -48,7 +48,7 @@ async def ast(format: Format, code: str = example_code):
 
 
 @app.get('/python_cfg')
-async def cfg(code: str = example_code):    
+async def cfg(code: str = example_code):
     data = python_cfg.make(code)
     return StreamingResponse(data, media_type=f"text/dot")
 

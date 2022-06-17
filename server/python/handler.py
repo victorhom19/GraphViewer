@@ -1,10 +1,10 @@
-import .python_ast
-import .python_cfg
+import python_ast
+import python_cfg
 
 
 def handler(code: str, model: str):
     if model == 'ast':
-        pass
+        return python_ast.make(code, format='dot')
     elif model == 'cfg':
-        pass
+        return python_cfg.make(code)
     pass
