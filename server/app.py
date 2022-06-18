@@ -6,8 +6,13 @@ from fastapi.responses import StreamingResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from server.python import python_ast, python_cfg
+from server.python.handler import handler as py_handler
+from server.kotlin.handler import handler as kt_handler
 
 app = FastAPI()
+
+functions = ["pythonast", "pythoncfg", "kotlinast"]
+handlers = {"python": py_handler, "kotlin": kt_handler}
 
 
 class Format(str, Enum):
@@ -51,6 +56,13 @@ async def ast(format: Format, code: str = example_code):
 async def cfg(code: str = example_code):
     data = python_cfg.make(code)
     return StreamingResponse(data, media_type=f"text/dot")
+
+
+@app.get('/viewgraph')                                   # Not tested!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+async def cfg(code: str = example_code, lang: str = "python", model: str = "ast"):
+    if (lang + model) in functions:
+        data = handlers.get(lang)(code, model)
+        return StreamingResponse(data, media_type=f"text/dot")
 
 
 if __name__ == '__main__':
