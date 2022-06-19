@@ -24,4 +24,4 @@ if __name__ == '__main__':
      val legitInput = "Thank you for placing the order ".splitWords().toSet()
      require(nbc.predict(legitInput) == false) { legitInput }
  }"""
-    get_ast(code)
+    print(get_ast(code))

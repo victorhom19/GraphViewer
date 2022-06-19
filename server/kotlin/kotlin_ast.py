@@ -1,3 +1,5 @@
+import re
+
 from antlr4 import *
 from antlr4.tree.Trees import Trees
 
@@ -12,5 +14,8 @@ def get_ast(code):
     stream = CommonTokenStream(lexer)
     parser = KotlinParser(stream)
     tree = parser.kotlinFile()
-    get_dot(tree)
-    print(Trees.toStringTree(tree, None, parser))
+    str_tree = Trees.toStringTree(tree, None, parser)
+    reg = re.compile(r'(\s\(\s*\))|\\n')
+    sub = reg.sub('', str_tree)
+    sub = sub.replace('"', '\\"')
+    return get_dot(sub)
