@@ -4,8 +4,188 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="/client/styles/style.css">
+
+    <script src="/client/codemirror/lib/codemirror.js"></script>
+    <link href="/client/codemirror/lib/codemirror.css" rel="stylesheet">
+    <link href="/client/codemirror/theme/darcula.css" rel="stylesheet">
+    <link href="/client/codemirror/theme/idea.css" rel="stylesheet">
+
+    <script src="/client/codemirror/mode/python/python.js"></script>
+    <script src="/client/codemirror/mode/xml/xml.js"></script>
+    <script src="/client/codemirror/mode/go/go.js"></script>
+    <script src="/client/codemirror/mode/clike/clike.js"></script>
 </head>
+
 <body>
-    <img src="/client/images/init.png">
+    <script src="//d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
+    <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
+    <div id="wrapper">
+        <header id="header">
+            <h1>GraphViewer</h1>
+            <nav class="header_menu">
+
+                <a href="" class="menu_link">Save</a>
+                <a href="" class="menu_link">Log In</a>
+            </nav>
+        </header>
+        <div class="content">
+            <div class="resizer" id="code_resizer" ondblclick="toggle_expand_mode('code')"></div>
+            <div class="content_wrapper" id="code_wrapper">
+                <div class="content_container">
+                    <header class="content_container_header">
+                        Code
+                        <div>
+                            <button onclick="toggle_code_theme(this)" class="ThemeButton">Theme</button>
+                            <select id="language_select" onchange="configure_code_section(this.value); update_graph()">
+                                <option>Python</option>
+                                <option>Kotlin</option>
+                                <option>Java</option>
+                                <option>Go</option>
+                            </select>
+                        </div>
+
+
+                    </header>
+                    <textarea id="code"></textarea>
+                </div>
+            </div>
+            <div class="resizer" id="graph_resizer" ondblclick="toggle_expand_mode('graph')"></div>
+            <div class="content_wrapper" id="graph_wrapper">
+                <div class="content_container">
+                    <header class="content_container_header">
+                        Graph
+                        <select id="graph_select" onchange="update_graph()">
+                            <option>AST</option>
+                            <option>CFG</option>
+                            <option>DDG</option>
+                            <option>SSA</option>
+                        </select>
+                    </header>
+                    <div id="graph"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        let delayTimer;
+        var theme_is_dark = false
+        var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+            mode: "python",
+            theme: "idea",
+            lineNumbers: true,
+            smartIndent: false,
+            matchBrackets: true
+        });
+        editor.setSize("100%", "100%");
+
+        function configure_code_section(language) {
+            switch (language) {
+                case "Python":
+                    editor.setOption("mode", "python");
+                    break
+                case "Kotlin":
+                    editor.setOption("mode", "text/x-kotlin");
+                    break
+                case "Java":
+                    editor.setOption("mode", "text/x-java");
+                    break
+                case "Go":
+                    editor.setOption("mode", "go");
+                    break
+
+            }
+        }
+
+        function toggle_code_theme(button) {
+            if (theme_is_dark) {
+                editor.setOption("theme", "idea");
+                button.style.setProperty("color", "#414047");
+                button.style.setProperty("background", "white");
+            } else {
+                editor.setOption("theme", "darcula");
+                button.style.setProperty("color", "white");
+                button.style.setProperty("background", "#414047");
+            }
+            theme_is_dark = !theme_is_dark;
+        }
+
+        function update_graph() {
+            let language = document.getElementById("language_select").value;
+            let graph_type = document.getElementById("graph_select").value;
+            let code_text = editor.getValue();
+            let query_temp = null;
+            switch (language) {
+                case "Python":
+                    switch (graph_type) {
+                        case "AST":
+                            query_temp = "http://localhost:8000/python_ast?format=text%2Fdot&code=";
+                            break
+                        case "CFG":
+                            query_temp = "http://localhost:8000/python_cfg?code=";
+                            break
+                    }
+                    break
+            }
+            if (query_temp !== null && code_text !== "") {
+                clearTimeout(delayTimer);
+                delayTimer = setTimeout(async function () {
+                    console.log(code_text);
+                    let res = await fetch(query_temp + encodeURIComponent(code_text));
+                    let js = await res.text();
+                    d3.select("#graph").graphviz()
+                        .renderDot(js);
+                }, 1000);
+            }
+        }
+
+        editor.on('change', function() {
+            update_graph()
+        })
+
+        const ExpandMode = {CODE: "code", GRAPH: "graph", MIDDLE: "middle", CUSTOM: "custom"};
+        var currentExpandMode = ExpandMode.MIDDLE;
+
+        var counter = 0;
+
+        function toggle_expand_mode(selectedExpandMode) {
+
+            counter++;
+            console.log(currentExpandMode, selectedExpandMode, counter)
+
+            if (currentExpandMode === selectedExpandMode) {
+                setExpandMode(ExpandMode.MIDDLE);
+            } else {
+                setExpandMode(selectedExpandMode);
+            }
+
+        }
+
+        function setExpandMode(expandMode) {
+            let code_wrapper = document.getElementById("code_wrapper");
+            let graph_wrapper = document.getElementById("graph_wrapper");
+            switch (expandMode) {
+                case ExpandMode.CODE:
+                    code_wrapper.style.setProperty("width", "100%");
+                    graph_wrapper.style.setProperty("width", "0%");
+                    break
+                case ExpandMode.GRAPH:
+                    code_wrapper.style.setProperty("width", "0%");
+                    graph_wrapper.style.setProperty("width", "100%");
+                    break
+                case ExpandMode.MIDDLE:
+                    code_wrapper.style.setProperty("width", "100%");
+                    graph_wrapper.style.setProperty("width", "100%");
+                    break
+            }
+            currentExpandMode = expandMode;
+        }
+
+
+
+    </script>
 </body>
 </html>
+
+
