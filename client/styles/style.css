@@ -204,5 +204,16 @@ header {
     transition: 0.3s;
 }
 
+.CodeMirror, .CodeMirror-gutters {
+    transition: 0.3s;
+    transition-property: background-color, border;
+}
+
+.CodeMirror-sizer {
+    max-height: calc(100% - 50px);
+    max-width: 100%;
+}
+
+
 
 

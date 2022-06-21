@@ -10,6 +10,9 @@
     <link href="/client/codemirror/theme/darcula.css" rel="stylesheet">
     <link href="/client/codemirror/theme/idea.css" rel="stylesheet">
 
+    <link rel="stylesheet" href="/client/codemirror/addon/scroll/simplescrollbars.css">
+    <script src="/client/codemirror/addon/scroll/simplescrollbars.js"></script>
+
     <script src="/client/codemirror/mode/python/python.js"></script>
     <script src="/client/codemirror/mode/xml/xml.js"></script>
     <script src="/client/codemirror/mode/go/go.js"></script>
@@ -44,8 +47,6 @@
                                 <option>Go</option>
                             </select>
                         </div>
-
-
                     </header>
                     <textarea id="code"></textarea>
                 </div>
@@ -76,7 +77,7 @@
             theme: "idea",
             lineNumbers: true,
             smartIndent: false,
-            matchBrackets: true
+            lineWrapping: false
         });
         editor.setSize("100%", "100%");
 
@@ -101,12 +102,12 @@
         function toggle_code_theme(button) {
             if (theme_is_dark) {
                 editor.setOption("theme", "idea");
-                button.style.setProperty("color", "#414047");
-                button.style.setProperty("background", "white");
-            } else {
-                editor.setOption("theme", "darcula");
                 button.style.setProperty("color", "white");
                 button.style.setProperty("background", "#414047");
+            } else {
+                editor.setOption("theme", "darcula");
+                button.style.setProperty("color", "#414047");
+                button.style.setProperty("background", "white");
             }
             theme_is_dark = !theme_is_dark;
         }
@@ -131,7 +132,6 @@
             if (query_temp !== null && code_text !== "") {
                 clearTimeout(delayTimer);
                 delayTimer = setTimeout(async function () {
-                    console.log(code_text);
                     let res = await fetch(query_temp + encodeURIComponent(code_text));
                     let js = await res.text();
                     d3.select("#graph").graphviz()
@@ -147,12 +147,7 @@
         const ExpandMode = {CODE: "code", GRAPH: "graph", MIDDLE: "middle", CUSTOM: "custom"};
         var currentExpandMode = ExpandMode.MIDDLE;
 
-        var counter = 0;
-
         function toggle_expand_mode(selectedExpandMode) {
-
-            counter++;
-            console.log(currentExpandMode, selectedExpandMode, counter)
 
             if (currentExpandMode === selectedExpandMode) {
                 setExpandMode(ExpandMode.MIDDLE);
@@ -181,8 +176,6 @@
             }
             currentExpandMode = expandMode;
         }
-
-
 
     </script>
 </body>
