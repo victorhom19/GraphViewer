@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script src="/client/codemirror/lib/codemirror.js"></script>
+    <link href="/client/codemirror/lib/codemirror.css" rel="stylesheet">
+    <link href="/client/codemirror/theme/darcula.css" rel="stylesheet">
+
+    <script src="/client/codemirror/mode/python/python.js"></script>
+    <script src="/client/codemirror/mode/xml/xml.js"></script>
+    <script src="/client/codemirror/mode/go/go.js"></script>
+    <script src="/client/codemirror/mode/clike/clike.js"></script>
+</head>
+<body>
+    <textarea id="code"></textarea>
+    <script>
+        var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+            mode: "python",
+            theme: "darcula"
+        });
+
+    </script>
+</body>
+</html>
