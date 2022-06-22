@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "871ac3f8a7982cb9f445d971349dc91e75e7a6214b95d28b2b09b31ded410059"
+            "sha256": "f984347909a93c8235bde324e4b6d794101741942ec19da2c5e85b664ecf9d30"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,6 +16,13 @@
         ]
     },
     "default": {
+        "antlr4-python3-runtime": {
+            "hashes": [
+                "sha256:061a49bc72ae05a35d9b61c0ba0ac36c0397708819f02fbfb20a80e47d287a1b"
+            ],
+            "index": "pypi",
+            "version": "==4.10"
+        },
         "anyio": {
             "hashes": [
                 "sha256:413adf95f93886e442aea925f3ee43baa5a765a64a0f52c6081894f9992fdd0b",
