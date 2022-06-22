@@ -25,4 +25,6 @@ if __name__ == '__main__':
      require(nbc.predict(legitInput) == false) { legitInput }
  }"""
     code2 = "val a = 2+2*2"
-    print(get_ast(code2))
+    code3 = """val a = \"\"\" ... ${\'$\'}eq ... \"\"\""""
+    print(code3)
+    print(get_ast(code3))
