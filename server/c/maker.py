@@ -26,7 +26,8 @@ def make(code: str, model='ssa'):
             # Пытаюсь запустить контейнер с установленным gcc, дополнительно соединяю контейнер с временной папкой с
             # исходным файлом
             client.containers.run(
-                'gcc:12', command=f"gcc -fdump-tree-{model}-graph main.c", working_dir='/src', volumes=[f"{dir}:/src"])
+                'gcc:12', command=f"gcc -fdump-tree-{model}-graph main.c",
+                working_dir='/src', volumes=[f"{dir}:/src"], remove=True)
         except ContainerError as e:
             # Тут можно поймать ошибку gcc, например если программа введена неверно
             raise RuntimeError(e.stderr)
