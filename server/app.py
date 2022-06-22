@@ -1,11 +1,12 @@
 from enum import Enum
 
 import uvicorn
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException, Response
 from fastapi.responses import StreamingResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from server.python import python_ast, python_cfg
+import server.c.handler as c_handler
 
 app = FastAPI()
 
@@ -51,6 +52,24 @@ async def ast(format: Format, code: str = example_code):
 async def cfg(code: str = example_code):
     data = python_cfg.make(code)
     return StreamingResponse(data, media_type=f"text/dot")
+
+
+@app.get('/c_ssa', response_class=Response)
+async def c_ssa(code: str = c_handler.example_code):
+    try:
+        data = c_handler.handler(code, model='ssa')
+    except RuntimeError as e:
+        raise HTTPException(400, detail=str(e))
+    return Response(data, media_type=f"text/dot")
+
+
+@app.get('/c_cfg', response_class=Response)
+async def c_cfg(code: str = c_handler.example_code):
+    try:
+        data = c_handler.handler(code, model='cfg')
+    except RuntimeError as e:
+        raise HTTPException(400, detail=str(e))
+    return Response(data, media_type=f"text/dot")
 
 
 if __name__ == '__main__':

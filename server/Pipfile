@@ -8,6 +8,7 @@ fastapi = "*"
 uvicorn = "*"
 graphviz = "*"
 staticfg = "*"
+docker = "*"
 
 [dev-packages]
 
