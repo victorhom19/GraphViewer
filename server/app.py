@@ -2,18 +2,15 @@ from enum import Enum
 
 import uvicorn
 from fastapi import FastAPI, Request, HTTPException, Response
-from fastapi.responses import StreamingResponse, FileResponse
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from server.python import python_ast, python_cfg
 from server.python.handler import handler as py_handler
 from server.kotlin.handler import handler as kt_handler
-import server.c.handler as c_handler
+from server.c.handler import handler as c_handler
 
-app = FastAPI()
-
-functions = ["pythonast", "pythoncfg", "kotlinast"]
-handlers = {"python": py_handler, "kotlin": kt_handler}
+functions = {'python': ('ast', 'cfg'), 'kotlin': ('ast',), 'c': ('cfg', 'ssa')}
+handlers = {"python": py_handler, "kotlin": kt_handler, "c": c_handler}
 
 
 class Format(str, Enum):
@@ -47,41 +44,54 @@ async def save(request: Request):
     pass
 
 
-@app.get('/python_ast', response_class=StreamingResponse)
-async def ast(format: Format, code: str = example_code):
-    data = python_ast.make(code, format=format.name)
-    return StreamingResponse(data, media_type=format.value)
+@app.get('/functions')
+async def all_functions():
+    """return all available languages and models"""
+    return functions
 
 
-@app.get('/python_cfg')
-async def cfg(code: str = example_code):
-    data = python_cfg.make(code)
-    return StreamingResponse(data, media_type=f"text/dot")
-
-
-@app.get('/view_graph')                                   # Not tested!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+@app.get('/view_graph')
 async def view_graph(code: str = example_code, lang: str = "python", model: str = "ast"):
-    if (lang + model) in functions:
-        data = handlers.get(lang)(code, model)
-        return StreamingResponse(data, media_type=f"text/dot")
+    if lang in functions and model in functions[lang]:
+        try:
+            data = handlers.get(lang)(code, model)
+            return Response(data, media_type=f"text/dot")
+        except SyntaxError as e:
+            raise HTTPException(400, detail=str(e))
+        except Exception as e:
+            raise HTTPException(400, detail=str(e))
+    else:
+        raise HTTPException(400, "Language and model not implemented")
 
 
-@app.get('/c_ssa', response_class=Response)
-async def c_ssa(code: str = c_handler.example_code):
-    try:
-        data = c_handler.handler(code, model='ssa')
-    except RuntimeError as e:
-        raise HTTPException(400, detail=str(e))
-    return Response(data, media_type=f"text/dot")
+# @app.get('/python_ast', response_class=StreamingResponse)
+# async def ast(format: Format, code: str = example_code):
+#     data = python_ast.make(code, format=format.name)
+#     return StreamingResponse(data, media_type=format.value)
+#
+#
+# @app.get('/python_cfg')
+# async def cfg(code: str = example_code):
+#     data = python_cfg.make(code)
+#     return StreamingResponse(data, media_type=f"text/dot")
+#
 
-
-@app.get('/c_cfg', response_class=Response)
-async def c_cfg(code: str = c_handler.example_code):
-    try:
-        data = c_handler.handler(code, model='cfg')
-    except RuntimeError as e:
-        raise HTTPException(400, detail=str(e))
-    return Response(data, media_type=f"text/dot")
+# @app.get('/c_ssa', response_class=Response)
+# async def c_ssa(code: str = c_handler_.example_code):
+#     try:
+#         data = c_handler_.handler(code, model='ssa')
+#     except RuntimeError as e:
+#         raise HTTPException(400, detail=str(e))
+#     return Response(data, media_type=f"text/dot")
+#
+#
+# @app.get('/c_cfg', response_class=Response)
+# async def c_cfg(code: str = c_handler_.example_code):
+#     try:
+#         data = c_handler_.handler(code, model='cfg')
+#     except RuntimeError as e:
+#         raise HTTPException(400, detail=str(e))
+#     return Response(data, media_type=f"text/dot")
 
 
 if __name__ == '__main__':
