@@ -18,4 +18,5 @@ def get_ast(code):
     reg = re.compile(r'(\s\(\s*\))|\\n')
     sub = reg.sub('', str_tree)
     sub = sub.replace('"', '\\"')
+    print(sub)
     return get_dot(sub)
