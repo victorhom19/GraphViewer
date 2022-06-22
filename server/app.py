@@ -58,8 +58,8 @@ async def cfg(code: str = example_code):
     return StreamingResponse(data, media_type=f"text/dot")
 
 
-@app.get('/viewgraph')                                   # Not tested!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-async def cfg(code: str = example_code, lang: str = "python", model: str = "ast"):
+@app.get('/view_graph')                                   # Not tested!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+async def view_graph(code: str = example_code, lang: str = "python", model: str = "ast"):
     if (lang + model) in functions:
         data = handlers.get(lang)(code, model)
         return StreamingResponse(data, media_type=f"text/dot")
