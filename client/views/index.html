@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="/client/styles/style.css">
 
-    <script src="/client/codemirror/lib/codemirror.js"></script>
-    <link href="/client/codemirror/lib/codemirror.css" rel="stylesheet">
-    <link href="/client/codemirror/theme/darcula.css" rel="stylesheet">
-    <link href="/client/codemirror/theme/idea.css" rel="stylesheet">
+    <link href="/client/styles/style.css" rel="stylesheet">
 
-    <script src="/client/codemirror/mode/python/python.js"></script>
-    <script src="/client/codemirror/mode/xml/xml.js"></script>
-    <script src="/client/codemirror/mode/go/go.js"></script>
-    <script src="/client/codemirror/mode/clike/clike.js"></script>
+    <script src="/client/ace/src/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/client/ace/src/theme-cloud9_night.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/client/ace/src/theme-cloud9_day.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/client/ace/src/mode-python.js" type="text/javascript" charset="utf-8"></script>
+
+
 </head>
 
 <body>
@@ -24,13 +22,14 @@
         <header id="header">
             <h1>GraphViewer</h1>
             <nav class="header_menu">
-
                 <a href="" class="menu_link">Save</a>
                 <a href="" class="menu_link">Log In</a>
             </nav>
         </header>
         <div class="content">
-            <div class="resizer" id="code_resizer" ondblclick="toggle_expand_mode('code')"></div>
+            <div class="resizer" id="code_resizer" ondblclick="toggle_expand_mode('code')">
+                <h4 class="resizer_label" id="code_resizer_label">Code</h4>
+            </div>
             <div class="content_wrapper" id="code_wrapper">
                 <div class="content_container">
                     <header class="content_container_header">
@@ -44,13 +43,13 @@
                                 <option>Go</option>
                             </select>
                         </div>
-
-
                     </header>
-                    <textarea id="code"></textarea>
+                    <div id="code"></div>
                 </div>
             </div>
-            <div class="resizer" id="graph_resizer" ondblclick="toggle_expand_mode('graph')"></div>
+            <div class="resizer" id="graph_resizer" ondblclick="toggle_expand_mode('graph')">
+                <h4 class="resizer_label" id="graph_resizer_label">Graph</h4>
+            </div>
             <div class="content_wrapper" id="graph_wrapper">
                 <div class="content_container">
                     <header class="content_container_header">
@@ -69,16 +68,29 @@
     </div>
     <script>
 
-        let delayTimer;
-        var theme_is_dark = false
-        var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-            mode: "python",
-            theme: "idea",
-            lineNumbers: true,
-            smartIndent: false,
-            matchBrackets: true
+        var theme_is_dark = false;
+        var editor = ace.edit("code");
+        editor.setTheme("ace/theme/cloud9_day");
+
+        editor.setOptions({
+          fontSize: "14pt"
         });
-        editor.setSize("100%", "100%");
+
+        var PythonScriptMode = ace.require("ace/mode/python").Mode;
+        editor.session.setMode(new PythonScriptMode());
+
+        function toggle_code_theme(button) {
+            if (theme_is_dark) {
+                editor.setTheme("ace/theme/cloud9_day");
+                button.style.setProperty("color", "white");
+                button.style.setProperty("background", "#414047");
+            } else {
+                editor.setTheme("ace/theme/cloud9_night");
+                button.style.setProperty("color", "#414047");
+                button.style.setProperty("background", "white");
+            }
+            theme_is_dark = !theme_is_dark;
+        }
 
         function configure_code_section(language) {
             switch (language) {
@@ -98,19 +110,8 @@
             }
         }
 
-        function toggle_code_theme(button) {
-            if (theme_is_dark) {
-                editor.setOption("theme", "idea");
-                button.style.setProperty("color", "#414047");
-                button.style.setProperty("background", "white");
-            } else {
-                editor.setOption("theme", "darcula");
-                button.style.setProperty("color", "white");
-                button.style.setProperty("background", "#414047");
-            }
-            theme_is_dark = !theme_is_dark;
-        }
 
+        let delayTimer;
         function update_graph() {
             let language = document.getElementById("language_select").value;
             let graph_type = document.getElementById("graph_select").value;
@@ -131,7 +132,6 @@
             if (query_temp !== null && code_text !== "") {
                 clearTimeout(delayTimer);
                 delayTimer = setTimeout(async function () {
-                    console.log(code_text);
                     let res = await fetch(query_temp + encodeURIComponent(code_text));
                     let js = await res.text();
                     d3.select("#graph").graphviz()
@@ -147,12 +147,7 @@
         const ExpandMode = {CODE: "code", GRAPH: "graph", MIDDLE: "middle", CUSTOM: "custom"};
         var currentExpandMode = ExpandMode.MIDDLE;
 
-        var counter = 0;
-
         function toggle_expand_mode(selectedExpandMode) {
-
-            counter++;
-            console.log(currentExpandMode, selectedExpandMode, counter)
 
             if (currentExpandMode === selectedExpandMode) {
                 setExpandMode(ExpandMode.MIDDLE);
@@ -164,25 +159,31 @@
 
         function setExpandMode(expandMode) {
             let code_wrapper = document.getElementById("code_wrapper");
+            let code_label = document.getElementById("code_resizer_label");
             let graph_wrapper = document.getElementById("graph_wrapper");
+            let graph_label = document.getElementById("graph_resizer_label");
             switch (expandMode) {
                 case ExpandMode.CODE:
                     code_wrapper.style.setProperty("width", "100%");
+                    code_label.style.removeProperty("color");
                     graph_wrapper.style.setProperty("width", "0%");
+                    graph_label.style.setProperty("color", "white");
                     break
                 case ExpandMode.GRAPH:
                     code_wrapper.style.setProperty("width", "0%");
+                    code_label.style.setProperty("color", "white");
                     graph_wrapper.style.setProperty("width", "100%");
+                    graph_label.style.removeProperty("color");
                     break
                 case ExpandMode.MIDDLE:
                     code_wrapper.style.setProperty("width", "100%");
+                    code_label.style.removeProperty("color");
                     graph_wrapper.style.setProperty("width", "100%");
+                    graph_label.style.removeProperty("color");
                     break
             }
             currentExpandMode = expandMode;
         }
-
-
 
     </script>
 </body>
