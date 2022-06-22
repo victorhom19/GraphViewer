@@ -1,5 +1,3 @@
-/*RESET STYLES*/
-
 a {
     text-decoration: none;
 }
@@ -13,12 +11,13 @@ li {
 html, body {
     background:white;
     margin: auto;
+    width: 100%;
     height: 100%;
     font-family: 'Helvetica', 'Arial', sans-serif;
 }
 
 #wrapper {
-    max-width: 1920px;
+    width: 100%;
     height: 100%;
     background: #3B3A3D;
     margin: auto;
@@ -105,14 +104,29 @@ header {
 
 
 .resizer {
-    min-width: 20px;
-    max-width: 20px;
+    width:25px;
     height: 100%;
     background: #414047;
     border: 1px solid #2a292e;
     box-sizing: border-box;
+    transition:0.3s;
 }
 
+.resizer:hover {
+    background: #2E2E34FF;
+}
+
+.resizer:hover .resizer_label {
+    color: #2E2E34FF;
+    transition: 0.3s;
+}
+
+.resizer_label {
+    transform: rotate(90deg);
+    color: #414047;
+    transition: 0.3s;
+    user-select: none;
+}
 
 .content_container {
     border-top: none;
@@ -139,6 +153,7 @@ header {
     color: white;
     font-size: 20px;
     font-family: 'Helvetica', 'Arial', sans-serif;
+    user-select: none;
 }
 
 .content_container_header div {
@@ -162,6 +177,7 @@ header {
 
 #code {
     height: 100%;
+    width: 100%;
     padding:0;
     position: absolute;
     margin:0;
@@ -193,7 +209,6 @@ header {
 }
 
 .ThemeButton {
-
     margin: 5px 15px 5px 0;
     width: 100px;
     background: #414047;
@@ -204,16 +219,8 @@ header {
     transition: 0.3s;
 }
 
-.CodeMirror, .CodeMirror-gutters {
+#code, .ace_active-line, .ace_gutter, .ace_gutter-cell {
     transition: 0.3s;
-    transition-property: background-color, border;
+    transition-property: background-color, border, color;
 }
-
-.CodeMirror-sizer {
-    max-height: calc(100% - 50px);
-    max-width: 100%;
-}
-
-
-
 
