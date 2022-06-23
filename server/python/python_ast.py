@@ -6,13 +6,13 @@ from uuid import uuid4 as uuid
 import graphviz as gv
 
 
-def make(code: str, format):
+def make(code: str):
     code_ast = ast.parse(code)
     transformed_ast = _transform_ast(code_ast)
 
     renderer = GraphRenderer()
     graph = renderer.render(transformed_ast, label=None)
-    graph.format = format
+    graph.format = "dot"
     yield graph.pipe()
 
 

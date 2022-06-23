@@ -5,6 +5,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
+from server.kotlin import kotlin_ast
 from server.python import python_ast, python_cfg
 from server.python.handler import handler as py_handler
 from server.kotlin.handler import handler as kt_handler
@@ -46,16 +47,31 @@ async def save(request: Request):
     pass
 
 
-@app.get('/python_ast', response_class=StreamingResponse)
-async def ast(format: Format, code: str = example_code):
-    data = python_ast.make(code, format=format.name)
-    return StreamingResponse(data, media_type=format.value)
+@app.get('/Python_AST')
+async def ast(code: str = example_code):
+    data = python_ast.make(code)
+    return StreamingResponse(data, media_type=f"text/dot")
 
 
-@app.get('/python_cfg')
+@app.get('/Python_CFG')
 async def cfg(code: str = example_code):
     data = python_cfg.make(code)
     return StreamingResponse(data, media_type=f"text/dot")
+
+
+@app.get('/Kotlin_AST')
+async def ast(code: str = example_code):
+    code = """fun main() {
+        println("Hello, world!!!")
+    }
+    """
+    data = kotlin_ast.get_ast(code)
+    return StreamingResponse(data, media_type=f"text/dot")
+
+@app.get('/stylize_graph')
+async def stylize(options):
+    
+    return ""
 
 
 @app.get('/viewgraph')                                   # Not tested!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -67,3 +83,4 @@ async def cfg(code: str = example_code, lang: str = "python", model: str = "ast"
 
 if __name__ == '__main__':
     uvicorn.run('app:app', host='0.0.0.0', port=8000, reload=True, debug=True)
+
