@@ -39,7 +39,9 @@ def connect(self, node1, node2):
 
 fragment NUM      : '0'..'9';
 fragment CHAR     : 'a'..'z' | 'A'..'Z';
-fragment SPECIALS : ('_'|'-'|':'|'*'|'.'|'/'|'='|'"'|'}'|'{'|'!'|','|'?'|'\\'|'\'');
+fragment SPECIALS : ('_'|'-'|':'|';'|'*'|'.'|'/'|'='|'"'|'}'|'{'|
+                    '!'|','|'?'|'\\'|'|'|'\''|'+'|'>'|'<'|'@'|'#'|
+                    '&'|'%'|']'|'['|'$');
 
 WORD   : (CHAR|SPECIALS|NUM)*;
 WS     : (' '|'\t'|'\n'|'\r')+ { self.skip(); } ;
