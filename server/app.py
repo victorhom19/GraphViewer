@@ -9,7 +9,6 @@ from server.python.handler import handler as py_handler
 from server.kotlin.handler import handler as kt_handler
 from server.c.handler import handler as c_handler
 
-from server.dot_parser import dp
 
 functions = {'python': ('ast', 'cfg'), 'kotlin': ('ast',), 'c': ('cfg', 'ssa')}
 handlers = {"python": py_handler, "kotlin": kt_handler, "c": c_handler}

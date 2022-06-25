@@ -13,6 +13,7 @@
     <script src="/client/ace/src/mode-kotlin.js" type="text/javascript" charset="utf-8"></script>
     <script src="/client/ace/src/mode-java.js" type="text/javascript" charset="utf-8"></script>
     <script src="/client/ace/src/mode-golang.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/client/ace/src/mode-c_cpp.js" type="text/javascript" charset="utf-8"></script>
 
 
 </head>
@@ -88,6 +89,7 @@
         var KotlinMode = ace.require("ace/mode/kotlin").Mode;
         var JavaMode = ace.require("ace/mode/java").Mode;
         var GoMode = ace.require("ace/mode/golang").Mode;
+        var CMode = ace.require("ace/mode/c_cpp").Mode;
         editor.session.setMode(new PythonMode());
         editor.setShowPrintMargin(false);
 
@@ -119,6 +121,9 @@
                     editor.session.setMode(new JavaMode());
                     break
                 case "Go":
+                    editor.session.setMode(new GoMode());
+                    break
+                case "C":
                     editor.session.setMode(new GoMode());
                     break
             }
