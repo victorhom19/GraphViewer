@@ -152,7 +152,7 @@ header {
     margin: auto;
     color: white;
     font-size: 20px;
-    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-family: Helvetica, Arial, sans-serif;
     user-select: none;
 }
 
@@ -170,7 +170,9 @@ header {
     text-align: center;
     border:none;
     border-radius: 10px;
-    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 550;
 }
 
 
@@ -200,6 +202,7 @@ header {
     border:none;
     display: inline-block;
     vertical-align: center;
+    user-select: none;
 }
 
 #graph svg {
@@ -210,13 +213,17 @@ header {
 
 .ThemeButton {
     margin: 5px 15px 5px 0;
-    width: 100px;
+    width: 40px;
+    height: 40px;
     background: #414047;
-    color:white;
     text-align: center;
     border:none;
     border-radius: 10px;
     transition: 0.3s;
+    padding: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #code, .ace_active-line, .ace_gutter, .ace_gutter-cell {
@@ -224,3 +231,8 @@ header {
     transition-property: background-color, border, color;
 }
 
+#ThemeIcon {
+    width: 80%;
+    display: block;
+    margin: 0;
+}
