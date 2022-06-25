@@ -10,12 +10,16 @@
     <script src="/client/ace/src/theme-cloud9_night.js" type="text/javascript" charset="utf-8"></script>
     <script src="/client/ace/src/theme-cloud9_day.js" type="text/javascript" charset="utf-8"></script>
     <script src="/client/ace/src/mode-python.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/client/ace/src/mode-kotlin.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/client/ace/src/mode-java.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/client/ace/src/mode-golang.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/client/ace/src/mode-c_cpp.js" type="text/javascript" charset="utf-8"></script>
 
 
 </head>
 
 <body>
-    <script src="//d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
     <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
     <div id="wrapper">
@@ -35,12 +39,15 @@
                     <header class="content_container_header">
                         Code
                         <div>
-                            <button onclick="toggle_code_theme(this)" class="ThemeButton">Theme</button>
+                            <button onclick="toggle_code_theme(this)" class="ThemeButton">
+                                <img id="ThemeIcon" src="/client/images/night_light.svg"/>
+                            </button>
                             <select id="language_select" onchange="configure_code_section(this.value); update_graph()">
                                 <option>Python</option>
                                 <option>Kotlin</option>
                                 <option>Java</option>
                                 <option>Go</option>
+                                <option>C</option>
                             </select>
                         </div>
                     </header>
@@ -52,7 +59,7 @@
             </div>
             <div class="content_wrapper" id="graph_wrapper">
                 <div class="content_container">
-                    <header class="content_container_header">
+                    <header class="content_container_header" id="graph_content_header">
                         Graph
                         <select id="graph_select" onchange="update_graph()">
                             <option>AST</option>
@@ -68,6 +75,8 @@
     </div>
     <script>
 
+        /*CODE SECTION SCRIPTS*/
+
         var theme_is_dark = false;
         var editor = ace.edit("code");
         editor.setTheme("ace/theme/cloud9_day");
@@ -76,16 +85,24 @@
           fontSize: "14pt"
         });
 
-        var PythonScriptMode = ace.require("ace/mode/python").Mode;
-        editor.session.setMode(new PythonScriptMode());
+        var PythonMode = ace.require("ace/mode/python").Mode;
+        var KotlinMode = ace.require("ace/mode/kotlin").Mode;
+        var JavaMode = ace.require("ace/mode/java").Mode;
+        var GoMode = ace.require("ace/mode/golang").Mode;
+        var CMode = ace.require("ace/mode/c_cpp").Mode;
+        editor.session.setMode(new PythonMode());
+        editor.setShowPrintMargin(false);
 
         function toggle_code_theme(button) {
+            var icon = document.getElementById("ThemeIcon")
             if (theme_is_dark) {
                 editor.setTheme("ace/theme/cloud9_day");
+                icon.src="/client/images/night_light.svg";
                 button.style.setProperty("color", "white");
                 button.style.setProperty("background", "#414047");
             } else {
                 editor.setTheme("ace/theme/cloud9_night");
+                icon.src="/client/images/day_dark.svg";
                 button.style.setProperty("color", "#414047");
                 button.style.setProperty("background", "white");
             }
@@ -95,66 +112,61 @@
         function configure_code_section(language) {
             switch (language) {
                 case "Python":
-                    editor.setOption("mode", "python");
+                    editor.session.setMode(new PythonMode());
                     break
                 case "Kotlin":
-                    editor.setOption("mode", "text/x-kotlin");
+                    editor.session.setMode(new KotlinMode());
                     break
                 case "Java":
-                    editor.setOption("mode", "text/x-java");
+                    editor.session.setMode(new JavaMode());
                     break
                 case "Go":
-                    editor.setOption("mode", "go");
+                    editor.session.setMode(new GoMode());
                     break
-
+                case "C":
+                    editor.session.setMode(new GoMode());
+                    break
             }
         }
 
 
         let delayTimer;
+        let wait_for_change_delay = 2000;
         function update_graph() {
-            let language = document.getElementById("language_select").value;
-            let graph_type = document.getElementById("graph_select").value;
-            let code_text = editor.getValue();
-            let query_temp = null;
-            switch (language) {
-                case "Python":
-                    switch (graph_type) {
-                        case "AST":
-                            query_temp = "http://localhost:8000/python_ast?format=text%2Fdot&code=";
-                            break
-                        case "CFG":
-                            query_temp = "http://localhost:8000/python_cfg?code=";
-                            break
-                    }
-                    break
-            }
-            if (query_temp !== null && code_text !== "") {
-                clearTimeout(delayTimer);
-                delayTimer = setTimeout(async function () {
-                    let res = await fetch(query_temp + encodeURIComponent(code_text));
-                    let js = await res.text();
-                    d3.select("#graph").graphviz()
-                        .renderDot(js);
-                }, 1000);
-            }
+            let language = document.getElementById("language_select").value.toLowerCase();
+            let graph_type = document.getElementById("graph_select").value.toLowerCase();
+            let code_text = encodeURIComponent(editor.getValue());
+            let query = `http://localhost:8000/view_graph?code=${code_text}&lang=${language}&model=${graph_type}`
+            clearTimeout(delayTimer);
+            delayTimer = setTimeout(async function () {
+                let res = await fetch(query);
+                if (res.status !== 200) {
+                    /*HANDLE ERROR CODE*/
+                }
+                let js = await res.text();
+                d3.select("#graph").graphviz()
+                    .renderDot(js);
+            }, wait_for_change_delay);
         }
 
         editor.on('change', function() {
             update_graph()
         })
+        /*---------------------------------------*/
+
+
+
+        /*RESIZER SCRIPTS*/
 
         const ExpandMode = {CODE: "code", GRAPH: "graph", MIDDLE: "middle", CUSTOM: "custom"};
         var currentExpandMode = ExpandMode.MIDDLE;
 
         function toggle_expand_mode(selectedExpandMode) {
-
             if (currentExpandMode === selectedExpandMode) {
                 setExpandMode(ExpandMode.MIDDLE);
             } else {
                 setExpandMode(selectedExpandMode);
             }
-
         }
 
         function setExpandMode(expandMode) {
@@ -184,6 +196,16 @@
             }
             currentExpandMode = expandMode;
         }
+        /*---------------------------------------*/
+
+
+
+
+        /*CUSTOM SELECT SCRIPTS*/
+
+
+
+        /*---------------------------------------*/
 
     </script>
 </body>
