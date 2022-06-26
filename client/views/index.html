@@ -9,6 +9,7 @@
     <script src="/client/ace/src/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="/client/ace/src/theme-cloud9_night.js" type="text/javascript" charset="utf-8"></script>
     <script src="/client/ace/src/theme-cloud9_day.js" type="text/javascript" charset="utf-8"></script>
+
     <script src="/client/ace/src/mode-python.js" type="text/javascript" charset="utf-8"></script>
     <script src="/client/ace/src/mode-kotlin.js" type="text/javascript" charset="utf-8"></script>
     <script src="/client/ace/src/mode-java.js" type="text/javascript" charset="utf-8"></script>
@@ -68,7 +69,17 @@
                             <option>SSA</option>
                         </select>
                     </header>
-                    <div id="graph"></div>
+                    <div id="graph">
+
+                        <div id="graph_loading">
+                            <img id="Loading" src="/client/images/loading_lightgrey.svg"/>
+                        </div>
+
+                        <div id="graph_error">
+                            <img id="Alert" src="/client/images/alert_dark.svg"/>
+                            Can't plot graph from given code. Please check for syntax errors.
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -124,7 +135,7 @@
                     editor.session.setMode(new GoMode());
                     break
                 case "C":
-                    editor.session.setMode(new GoMode());
+                    editor.session.setMode(new CMode());
                     break
             }
         }
@@ -135,18 +146,34 @@
         function update_graph() {
             let language = document.getElementById("language_select").value.toLowerCase();
             let graph_type = document.getElementById("graph_select").value.toLowerCase();
-            let code_text = encodeURIComponent(editor.getValue());
+            let raw_text = editor.getValue();
+            let code_text = encodeURIComponent(raw_text);
             let query = `http://localhost:8000/view_graph?code=${code_text}&lang=${language}&model=${graph_type}`
+            var graph_loading = document.getElementById("graph_loading")
+            var graph_error = document.getElementById("graph_error")
+            graph_loading.style.setProperty("display", "inline-flex");
             clearTimeout(delayTimer);
             delayTimer = setTimeout(async function () {
                 let res = await fetch(query);
+                graph_loading.style.setProperty("display", "none");
                 if (res.status !== 200) {
                     /*HANDLE ERROR CODE*/
+                    graph_error.style.setProperty("display", "inline-flex");
+                    console.log(`Error with status ${res.status}`);
+                    d3.selectAll("svg").remove();
+                } else {
+                    console.log(raw_text.trim().length)
+                    graph_error.style.setProperty("display", "none");
+                    if (raw_text.trim().length === 0) {
+                        d3.selectAll("svg").remove();
+                    }
+                    else {
+                        let js = await res.text();
+                        d3.select("#graph").graphviz().renderDot(js);
+                    }
                 }
-                let js = await res.text();
-                d3.select("#graph").graphviz()
-                    .renderDot(js);
             }, wait_for_change_delay);
+            return 0;
         }
 
         editor.on('change', function() {
@@ -197,9 +224,6 @@
             currentExpandMode = expandMode;
         }
         /*---------------------------------------*/
-
-
-
 
         /*CUSTOM SELECT SCRIPTS*/
 
