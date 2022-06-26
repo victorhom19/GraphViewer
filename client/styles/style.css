@@ -16,10 +16,6 @@ html, body {
     font-family: 'Helvetica', 'Arial', sans-serif;
 }
 
-img {
-    pointer-events: none;
-}
-
 #wrapper {
     width: 100%;
     height: 100%;
@@ -209,7 +205,6 @@ header {
     user-select: none;
 }
 
-
 #graph svg {
     background: white;
     width: 100%;
@@ -234,47 +229,10 @@ header {
 #code, .ace_active-line, .ace_gutter, .ace_gutter-cell {
     transition: 0.3s;
     transition-property: background-color, border, color;
-    user-select: none;
 }
 
 #ThemeIcon {
     width: 80%;
     display: block;
     margin: 0;
-}
-
-#graph_error, #graph_loading {
-    display: none;
-    flex-direction: column;
-    background: lightgray;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 18px;
-    font-weight: 200;
-    color: #3B3A3D;
-    white-space: nowrap;
-  	overflow: hidden;
-  	text-overflow: ellipsis;
-}
-
-#graph_loading{
-    background: white;
-}
-
-#Alert, #Loading {
-    margin: 30px;
-    width: 200px;
-}
-
-#Loading {
-    animation: blinking 2s infinite linear;
-}
-
-@keyframes blinking{
-    0%   { opacity: 50% }
-    50% { opacity: 100% }
-    100%   { opacity: 50% }
 }
