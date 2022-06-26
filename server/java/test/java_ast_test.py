@@ -59,5 +59,40 @@ if __name__ == '__main__':
         }
     }
     """
-    print(code3)
-    print(get_ast(code3))
+    code4 = """
+    public class A extends B {
+        @Override
+        public void upsert(BaseEntry<MemorySegment> entry) {
+            State currentState = state;
+    
+            lock.readLock().lock();
+            try {
+                currentState.memory.put(entry);
+            } finally {
+                lock.readLock().unlock();
+            }
+    
+            try {
+                if (currentState.memory.getBytesSize() >= config.flushThresholdBytes()) {
+                    flush();
+                }
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
+        
+        public static void main(){
+            int a;
+            a = 5;
+        }
+    }
+    
+    class Example{
+        public static void main(){
+            int a;
+            a = 5 ^ 2;
+        }
+    }
+    """
+    print(code4)
+    print(get_ast(code4))
