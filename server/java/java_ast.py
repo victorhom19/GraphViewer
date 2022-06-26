@@ -22,13 +22,17 @@ def get_ast(code):
     tree = parser.compilationUnit()
 
     str_tree = Trees.toStringTree(tree, None, parser)
-    reg = re.compile(r'\s\(\s*\)')
-    sub = reg.sub('', str_tree)
 
-    reg2 = re.compile(r'\s\(\s')
-    sub2 = reg2.sub('', sub)
+    sub = replace(r'\s\(\s*\)', str_tree, '')
+    sub = replace(r'\s\(\s', sub, '')
+    sub = replace(r'\"', sub, '\\"')
 
-    return get_dot(sub2)
+    return get_dot(sub)
+
+
+def replace(regex, string, replacement):
+    reg = re.compile(regex)
+    return reg.sub(replacement, string)
 
 
 class MyErrorListener(ErrorListener):
