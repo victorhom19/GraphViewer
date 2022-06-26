@@ -42,7 +42,7 @@ class Ast:
         ignored = not verbose and ctx.getChildCount() == 1 and isinstance(ctx.getChild(0),
                                                                           ParserRuleContext)
         if not ignored:
-            rule_name = KotlinLexer.ruleNames[ctx.getRuleIndex()]
+            rule_name = KotlinParser.ruleNames[ctx.getRuleIndex()]
             self.line_num.append(str(index))
             self.type_rule.append(rule_name)
             self.content.append(ctx.getText())  # full text of program
