@@ -32,5 +32,32 @@ if __name__ == '__main__':
             }
         }
     """
-    print(code2)
-    print(get_ast(code2))
+    code3 = """
+    class A {
+        public static void main() {
+            List<Emails> emails = Arrays.of(
+                new Email("Hey! If you really want to enlarge your ML scores click here", isSpam = true),
+                new Email("Earn 50 more points for ML just by visiting this site!", isSpam = true),
+                new Email("Still have F grade? Professional help with ML right here", isSpam = true),
+                
+                new Email("Hey, I left my phone at home. Email me if you need anything.", isSpam = false),
+                new Email("Stay At Home: COVID-19 news", isSpam = false),
+                new Email("Please see attachment for notes on today's meeting.", isSpam = false),
+                new Email("JetBrains license certificate", isSpam = false),
+                new Email("Your Education Pack expires soon ", isSpam = false)
+            );
+            
+            NBC nbc = toNativeBayesClassifier(
+                emails
+            );
+            
+            String spamInput = "your grade is still so bad, but I can help you to get more scores".splitWords().toSet();
+            require(nbc.predict(spamInput) == true);
+            
+            String legitInput = "Thank you for placing the order ".splitWords().toSet();
+            require(nbc.predict(legitInput) == false);
+        }
+    }
+    """
+    print(code3)
+    print(get_ast(code3))
