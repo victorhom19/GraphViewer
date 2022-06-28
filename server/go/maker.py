@@ -30,13 +30,14 @@ def make(code: str, model='ast'):
 
         try:
             client.containers.run(
-                'st-dot',
+                'nikiens/st-dot',
                 command=f'main.go --{model} -o {model}.dot',
                 working_dir='/tmp', remove=True,
                 volumes=[f'{Path(dir)}:/tmp']
             )
         except ContainerError as e:
             logging.warn(e)
+            raise RuntimeError('Something wrong')
 
         # Ищу в папке сгенерированный граф
         files = fnmatch.filter(os.listdir(dir), f'{model}.dot')
