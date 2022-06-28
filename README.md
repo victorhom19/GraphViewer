@@ -43,9 +43,9 @@ graph TD;
 - [graphviz](https://graphviz.org/)
 
 ## Поддержка Go
-Чтобы приложение работало с Go необходимо собрать образ Docker:
-'''console
+Чтобы приложение работало с кодом на Go необходимо собрать образ Docker:
+```console
 docker build -t st-dot server/go/src/github.com/nikiens/st-dot
-'''
+```
 
 ## Алгоритм запуска расположен в папке [server](./server/readme.md)
