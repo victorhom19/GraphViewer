@@ -43,7 +43,7 @@ graph TD;
 - [graphviz](https://graphviz.org/)
 
 ## Поддержка Go
-Чтобы приложение работало с кодом на Go необходимо собрать образ Docker:
+Чтобы приложение работало с кодом на Go необходимо собрать docker образ:
 ```bash
 docker build -t st-dot server/go/src/github.com/nikiens/st-dot
 ```
