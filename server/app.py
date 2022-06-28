@@ -5,13 +5,14 @@ from fastapi import FastAPI, Request, HTTPException, Response
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from server.python.handler import handler as py_handler
-from server.kotlin.handler import handler as kt_handler
-from server.c.handler import handler as c_handler
+from python.handler import handler as py_handler
+from kotlin.handler import handler as kt_handler
+from c.handler import handler as c_handler
+from go.handler import handler as go_handler
 
 
-functions = {'python': ('ast', 'cfg'), 'kotlin': ('ast',), 'c': ('cfg', 'ssa')}
-handlers = {"python": py_handler, "kotlin": kt_handler, "c": c_handler}
+functions = {'python': ('ast', 'cfg'), 'kotlin': ('ast',), 'c': ('cfg', 'ssa'), 'go': ('ast', 'cfg')}
+handlers = {"python": py_handler, "kotlin": kt_handler, "c": c_handler, 'go': go_handler}
 
 
 class Format(str, Enum):
