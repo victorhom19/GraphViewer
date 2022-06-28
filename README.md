@@ -44,7 +44,7 @@ graph TD;
 
 ## Поддержка Go
 Чтобы приложение работало с кодом на Go необходимо собрать образ Docker:
-```console
+```bash
 docker build -t st-dot server/go/src/github.com/nikiens/st-dot
 ```
 
