@@ -45,8 +45,8 @@ class Ast:
             rule_name = KotlinParser.ruleNames[ctx.getRuleIndex()]
             self.line_num.append(str(index))
             self.type_rule.append(rule_name)
-            self.content.append(ctx.getText())  # full text of program
-            # self.content.append(self.get_text(ctx))  # text of last nodes
+            # self.content.append(ctx.getText())  # full text of program
+            self.content.append(self.get_text(ctx))  # text of last nodes
 
         for i in range(ctx.getChildCount()):
             element = ctx.getChild(i)
