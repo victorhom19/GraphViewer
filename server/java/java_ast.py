@@ -4,9 +4,9 @@ from antlr4 import *
 from antlr4.error.ErrorListener import ErrorListener
 from antlr4.tree.Trees import Trees
 
-from server.java.antlr.Java8Lexer import Java8Lexer
-from server.java.antlr.Java8Parser import Java8Parser
-from server.java.dot_gen.get_dot import get_dot
+from java.antlr.Java8Lexer import Java8Lexer
+from java.antlr.Java8Parser import Java8Parser
+from java.dot_gen.get_dot import get_dot
 
 
 def get_ast(code):

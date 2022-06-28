@@ -1,4 +1,4 @@
-from server.java.java_ast import get_ast
+from java.java_ast import get_ast
 
 
 def handler(code: str, model: str):

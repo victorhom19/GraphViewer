@@ -1,7 +1,7 @@
 from antlr4 import CommonTokenStream, InputStream
 
-from server.java.dot_gen.TreeLexer import TreeLexer
-from server.java.dot_gen.TreeParser import TreeParser
+from java.dot_gen.TreeLexer import TreeLexer
+from java.dot_gen.TreeParser import TreeParser
 
 
 def evaluateTree(string):
