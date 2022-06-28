@@ -35,11 +35,20 @@ graph TD;
 #### 3) c
 - cfg
 - ssa
+#### 4) go
+- ast
+- cfg
 # Установка
 
 ## Требования
 - [Docker](https://www.docker.com/get-started/)
 - python3
 - [graphviz](https://graphviz.org/)
+
+## Поддержка Go
+Чтобы приложение работало с кодом на Go необходимо собрать docker образ:
+```bash
+docker build -t st-dot server/go/src/github.com/nikiens/st-dot
+```
 
 ## Алгоритм запуска расположен в папке [server](./server/readme.md)

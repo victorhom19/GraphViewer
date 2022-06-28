@@ -1,4 +1,4 @@
-from server.kotlin.kotlin_ast import get_ast
+from kotlin.kotlin_ast import get_ast
 
 
 def handler(code: str, model: str):

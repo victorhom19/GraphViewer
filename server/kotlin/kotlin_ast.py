@@ -1,8 +1,8 @@
 from antlr4 import *
 from antlr4.error.ErrorListener import ErrorListener
 
-from server.kotlin.antlr.KotlinLexer import KotlinLexer
-from server.kotlin.antlr.KotlinParser import KotlinParser
+from kotlin.antlr.KotlinLexer import KotlinLexer
+from kotlin.antlr.KotlinParser import KotlinParser
 
 
 def get_ast(code):

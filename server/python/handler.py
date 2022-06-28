@@ -1,4 +1,4 @@
-from server.python import python_ast, python_cfg
+from python import python_ast, python_cfg
 
 
 def handler(code: str, model: str):
