@@ -1,12 +1,11 @@
-import subprocess
-import docker
-from importlib.resources import path
-import logging
-from docker.errors import ContainerError
-import tempfile
-import os
-from pathlib import Path
 import fnmatch
+import logging
+import os
+import tempfile
+from pathlib import Path
+
+import docker
+from docker.errors import ContainerError
 
 # Доступные модели
 MODELS = ['ast', 'cfg']
