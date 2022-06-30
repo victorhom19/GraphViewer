@@ -19,7 +19,6 @@ def get_cfg(code: str):
             client.containers.run(
                 'strgss/kt_with_jar', command=f"kotlinc Main.kt -d main.jar",
                 working_dir='/src', volumes=[f"{dir}:/src"], remove=True)
-            _dir = dir.replace('\\', '/')
             client.containers.run(
                 'strgss/kt_with_jar', command=f"java -jar /usr/lib/kt_cfg-v0.jar {package}",
                 working_dir='/src', volumes=[f"{dir}:/src"], remove=True)
