@@ -1,31 +1,27 @@
-import pathlib
+import fnmatch
+import os
 import re
-import shutil
+import tempfile
+from pathlib import Path
 
 import docker
 from docker.errors import ContainerError
-import tempfile
-import os
-from pathlib import Path
-import fnmatch
 
 
 def get_cfg(code: str):
-    jar_path = sorted(pathlib.Path('.').glob('**/kt_cfg*.jar'))[0].absolute()
     client = docker.from_env()
     with tempfile.TemporaryDirectory() as dir:
-        shutil.copy(jar_path, dir + '/kt_cfg.jar')
         name = Path(dir) / 'Main.kt'
         package = get_package(code)
         with open(name, 'w') as file:
             file.write(code)
         try:
             client.containers.run(
-                'zenika/kotlin', command=f"kotlinc Main.kt -d main.jar",
+                'strgss/kt_with_jar', command=f"kotlinc Main.kt -d main.jar",
                 working_dir='/src', volumes=[f"{dir}:/src"], remove=True)
             _dir = dir.replace('\\', '/')
             client.containers.run(
-                'zenika/kotlin', command=f"java -jar kt_cfg.jar {package}",
+                'strgss/kt_with_jar', command=f"java -jar /usr/lib/kt_cfg-v0.jar {package}",
                 working_dir='/src', volumes=[f"{dir}:/src"], remove=True)
         except ContainerError as e:
             raise RuntimeError(e.stderr)
