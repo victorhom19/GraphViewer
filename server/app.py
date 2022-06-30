@@ -11,7 +11,8 @@ from c.handler import handler as c_handler
 from go.handler import handler as go_handler
 from java.handler import handler as java_handler
 
-functions = {'python': ('ast', 'cfg'), 'kotlin': ('ast',), 'c': ('cfg', 'ssa'), 'go': ('ast', 'cfg'), 'java': 'ast'}
+functions = {'python': ('ast', 'cfg'), 'kotlin': ('ast', 'cfg'), 'c': ('cfg', 'ssa'), 'go': ('ast', 'cfg'),
+             'java': 'ast'}
 handlers = {"python": py_handler, "kotlin": kt_handler, "c": c_handler, 'go': go_handler, 'java': java_handler}
 
 
