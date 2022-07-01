@@ -1,27 +1,26 @@
+import re
+
 from antlr4 import *
 from antlr4.error.ErrorListener import ErrorListener
+from antlr4.tree.Trees import Trees
 
-from kotlin.antlr.KotlinLexer import KotlinLexer
-from kotlin.antlr.KotlinParser import KotlinParser
+from java.antlr.Java8Lexer import Java8Lexer
+from java.antlr.Java8Parser import Java8Parser
+from java.dot_gen.get_dot import get_dot
 
 
 def get_ast(code):
     inp_stream = InputStream(code)
-    lexer = KotlinLexer(inp_stream)
+    lexer = Java8Lexer(inp_stream)
     lexer.removeErrorListeners()
     my_listener = MyErrorListener()
     lexer.addErrorListener(my_listener)
     stream = CommonTokenStream(lexer)
-    parser = KotlinParser(stream)
+    parser = Java8Parser(stream)
     parser.removeErrorListeners()
     parser.addErrorListener(my_listener)
-    tree = parser.kotlinFile()
-    # str_tree = Trees.toStringTree(tree, None, parser)
-    # reg = re.compile(r'\s\(\s*\)')
-    # sub = reg.sub('', str_tree)
-    # sub = str_tree.replace('"', '\\"')
-    # print(sub)
-    # return get_dot(sub)
+    tree = parser.compilationUnit()
+
     my_tree = Ast()
     my_tree.gen_ast(tree, False, 0)
     my_tree.create_dot()
@@ -29,6 +28,11 @@ def get_ast(code):
     if res == "digraph g {" or res == "digraph g {\n}":
         raise RuntimeError('Something wrong')
     return res
+
+
+def replace(regex, string, replacement):
+    reg = re.compile(regex)
+    return reg.sub(replacement, string)
 
 
 class Ast:
@@ -42,7 +46,7 @@ class Ast:
         ignored = not verbose and ctx.getChildCount() == 1 and isinstance(ctx.getChild(0),
                                                                           ParserRuleContext)
         if not ignored:
-            rule_name = KotlinParser.ruleNames[ctx.getRuleIndex()]
+            rule_name = Java8Parser.ruleNames[ctx.getRuleIndex()]
             self.line_num.append(str(index))
             self.type_rule.append(rule_name)
             # self.content.append(ctx.getText())  # full text of program
