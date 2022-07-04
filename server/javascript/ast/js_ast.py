@@ -12,7 +12,7 @@ def make(code: str):
 
         client = docker.from_env()
 
-        return client.containers.run("jsast",
+        return client.containers.run("artmsd/js_ast",
                                 ["java", "-jar", "/home/compiler.jar", "--js", 'code/code.js', "--print_ast"],
                                 remove=True,
                                 working_dir='/home',
