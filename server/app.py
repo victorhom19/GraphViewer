@@ -12,7 +12,7 @@ from go.handler import handler as go_handler
 from java.handler import handler as java_handler
 
 functions = {'python': ('ast', 'cfg'), 'kotlin': ('ast', 'cfg'), 'c': ('ast', 'cfg', 'ssa'), 'go': ('ast', 'cfg'),
-             'java': ('ast',)}
+             'java': ('ast', 'cfg')}
 handlers = {"python": py_handler, "kotlin": kt_handler, "c": c_handler, 'go': go_handler, 'java': java_handler}
 
 
