@@ -43,6 +43,8 @@ graph TD;
 #### 5) go
 - ast
 - cfg
+#### 6) javascript
+- ast
 # Установка
 
 ## Требования
