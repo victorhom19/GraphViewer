@@ -33,11 +33,13 @@ graph TD;
 #### 2) kotlin
 - ast
 - cfg
-#### 3) c
+#### 3) java
+- ast
+#### 4) c
 - ast
 - cfg
 - ssa
-#### 4) go
+#### 5) go
 - ast
 - cfg
 # Установка
