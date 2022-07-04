@@ -43,11 +43,11 @@
                                 <img id="ThemeIcon" src="/client/images/night_light.svg"/>
                             </button>
                             <select id="language_select" onchange="configure_code_section(this.value); update_graph()">
-                                <option>Python</option>
+                                <!--option>Python</option>
                                 <option>Kotlin</option>
                                 <option>Java</option>
                                 <option>Go</option>
-                                <option>C</option>
+                                <option>C</option-->
                             </select>
                         </div>
                     </header>
@@ -62,10 +62,10 @@
                     <header class="content_container_header" id="graph_content_header">
                         Graph
                         <select id="graph_select" onchange="update_graph()">
-                            <option>AST</option>
+                            <!--option>AST</option>
                             <option>CFG</option>
                             <option>DDG</option>
-                            <option>SSA</option>
+                            <option>SSA</option-->
                         </select>
                     </header>
                     <div id="graph"></div>
@@ -77,6 +77,8 @@
 
         /*CODE SECTION SCRIPTS*/
 
+        const ip_port = "localhost:8000"
+        var functions = [] // all languages and functions
         var theme_is_dark = false;
         var editor = ace.edit("code");
         editor.setTheme("ace/theme/cloud9_day");
@@ -110,6 +112,9 @@
         }
 
         function configure_code_section(language) {
+            console.log(`configure_code_section('${language}')`)
+            graph_select.innerHTML=''
+            functions[language].forEach(it => graph_select.add(new Option(it)))
             switch (language) {
                 case "Python":
                     editor.session.setMode(new PythonMode());
@@ -136,7 +141,7 @@
             let language = document.getElementById("language_select").value.toLowerCase();
             let graph_type = document.getElementById("graph_select").value.toLowerCase();
             let code_text = encodeURIComponent(editor.getValue());
-            let query = `http://localhost:8000/view_graph?code=${code_text}&lang=${language}&model=${graph_type}`
+            let query = `http://${ip_port}/view_graph?code=${code_text}&lang=${language}&model=${graph_type}`
             clearTimeout(delayTimer);
             delayTimer = setTimeout(async function () {
                 let res = await fetch(query);
@@ -206,6 +211,16 @@
 
 
         /*---------------------------------------*/
+        fetch(`http://${ip_port}/functions`)
+            .then(res => res.json())
+            .then(data => {
+                functions = data
+                for (var lang in data) {
+                    language_select.add(new Option(lang))
+                }
+                // select for first language
+                configure_code_section(language_select.children[0].text)
+            })
 
     </script>
 </body>
