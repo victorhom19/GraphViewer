@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from python.handler import handler as py_handler
-from server.kotlin.handler import handler as kt_handler
+from kotlin.handler import handler as kt_handler
 from c.handler import handler as c_handler
 from go.handler import handler as go_handler
 from java.handler import handler as java_handler
