@@ -32,7 +32,9 @@ graph TD;
 - cfg
 #### 2) kotlin
 - ast
+- cfg
 #### 3) c
+- ast
 - cfg
 - ssa
 #### 4) go
