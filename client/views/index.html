@@ -14,7 +14,7 @@
     <script src="/client/ace/src/mode-java.js" type="text/javascript" charset="utf-8"></script>
     <script src="/client/ace/src/mode-golang.js" type="text/javascript" charset="utf-8"></script>
     <script src="/client/ace/src/mode-c_cpp.js" type="text/javascript" charset="utf-8"></script>
-
+    <script src="/client/ace/src/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
 
 </head>
 
@@ -47,7 +47,8 @@
                                 <option>Kotlin</option>
                                 <option>Java</option>
                                 <option>Go</option>
-                                <option>C</option-->
+                                <option>C</option>
+                                <option>JavaScript</option-->
                             </select>
                         </div>
                     </header>
@@ -92,6 +93,7 @@
         var JavaMode = ace.require("ace/mode/java").Mode;
         var GoMode = ace.require("ace/mode/golang").Mode;
         var CMode = ace.require("ace/mode/c_cpp").Mode;
+        var JSMode = ace.require("ace/mode/javascript").Mode;
         editor.session.setMode(new PythonMode());
         editor.setShowPrintMargin(false);
 
@@ -130,6 +132,9 @@
                     break
                 case "C":
                     editor.session.setMode(new GoMode());
+                    break
+                case "JavaScript":
+                    editor.session.setMode(new JSMode());
                     break
             }
         }
