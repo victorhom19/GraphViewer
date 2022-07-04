@@ -4,7 +4,7 @@ from antlr4 import *
 from java.antlr.Java8Lexer import Java8Lexer
 from java.antlr.Java8Parser import Java8Parser
 
-from server.ast_view.ast import MyErrorListener, Ast
+from ast_view.ast import MyErrorListener, Ast
 
 
 def get_ast(code):
