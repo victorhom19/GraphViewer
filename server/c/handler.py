@@ -1,5 +1,5 @@
+from .c_ast import get_ast
 from .maker import make
-
 
 example_code = """
 int main()
@@ -21,4 +21,6 @@ int main()
 
 
 def handler(code: str, model: str):
+    if model == 'ast':
+        return get_ast(code)
     return make(code, model=model)
