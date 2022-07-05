@@ -256,11 +256,14 @@
         }
 
         function update_graph_select() {
-            var select_box = document.getElementById(SelectBoxes.GRAPH_BOX);
-            var graph_box = document.getElementById(SelectBoxes.CODE_BOX);
-            update_select(select_box,
-                implemented_funcs_dict[get_current(graph_box).toLowerCase()].map(lang => lang.toUpperCase()))
-
+            var graph_box = document.getElementById(SelectBoxes.GRAPH_BOX);
+            var code_box = document.getElementById(SelectBoxes.CODE_BOX);
+            var trees = implemented_funcs_dict[get_current(code_box).toLowerCase()];
+            if (Array.isArray(trees)) {
+                update_select(graph_box, trees.map(lang => lang.toUpperCase()));
+            } else {
+                update_select(graph_box, [trees].map(lang => lang.toUpperCase()));
+            }
         }
 
         function update_select(select_box, values) {
