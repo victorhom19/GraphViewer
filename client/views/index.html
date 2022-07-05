@@ -15,7 +15,7 @@
     <script src="/client/ace/src/mode-java.js" type="text/javascript" charset="utf-8"></script>
     <script src="/client/ace/src/mode-golang.js" type="text/javascript" charset="utf-8"></script>
     <script src="/client/ace/src/mode-c_cpp.js" type="text/javascript" charset="utf-8"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js" referrerpolicy="no-referrer"></script>
 
 </head>
 
@@ -27,8 +27,8 @@
         <header id="header">
             <h1>GraphViewer</h1>
             <nav class="header_menu">
-                <a href="" class="menu_link">Save</a>
-                <a href="" class="menu_link">Log In</a>
+                <div href="" class="menu_link" onclick="save()">Save</div>
+                <div href="" class="menu_link" onclick="load()">Load</div>
             </nav>
         </header>
         <div class="content">
@@ -329,6 +329,30 @@
 
 
         /*---------------------------------------*/
+        function save() {
+            var file = new File(
+                [editor.getValue()],
+                "code.txt",
+                {type: "text/plain;charset=utf8"}
+            );
+            saveAs(file);
+        }
+
+        function load() {
+            var input = document.createElement('input');
+            input.type = 'file';
+            input.onchange = e => {
+               var file = e.target.files[0];
+               var reader = new FileReader();
+               reader.readAsText(file,'UTF-8');
+               reader.onload = readerEvent => {
+                  var content = readerEvent.target.result; // this is the content!
+                  editor.setValue(content, 1);
+               }
+            }
+            input.click();
+        }
+
 
     </script>
 </body>
