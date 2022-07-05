@@ -16,8 +16,6 @@
     <script src="/client/ace/src/mode-golang.js" type="text/javascript" charset="utf-8"></script>
     <script src="/client/ace/src/mode-c_cpp.js" type="text/javascript" charset="utf-8"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js" referrerpolicy="no-referrer"></script>
-
 
 </head>
 
@@ -29,8 +27,8 @@
         <header id="header">
             <h1>GraphViewer</h1>
             <nav class="header_menu">
-                <div href="" class="menu_link" onclick="save('graph_viewer.txt')">Save</div>
-                <div class="menu_link" onclick="load()">Load</div>
+                <a href="" class="menu_link">Save</a>
+                <a href="" class="menu_link">Log In</a>
             </nav>
         </header>
         <div class="content">
@@ -141,6 +139,7 @@
 
         let delayTimer;
         let wait_for_change_delay = 3000;
+        let error_message_delay = 5000
         function update_graph() {
             let language = get_current(document.getElementById("code_box")).toLowerCase();
             let graph_type = get_current(document.getElementById("graph_box")).toLowerCase();
@@ -257,14 +256,11 @@
         }
 
         function update_graph_select() {
-            var graph_box = document.getElementById(SelectBoxes.GRAPH_BOX);
-            var code_box = document.getElementById(SelectBoxes.CODE_BOX);
-            var trees = implemented_funcs_dict[get_current(code_box).toLowerCase()];
-            if (Array.isArray(trees)) {
-                update_select(graph_box, trees.map(lang => lang.toUpperCase()));
-            } else {
-                update_select(graph_box, [trees].map(lang => lang.toUpperCase()));
-            }
+            var select_box = document.getElementById(SelectBoxes.GRAPH_BOX);
+            var graph_box = document.getElementById(SelectBoxes.CODE_BOX);
+            update_select(select_box,
+                implemented_funcs_dict[get_current(graph_box).toLowerCase()].map(lang => lang.toUpperCase()))
+
         }
 
         function update_select(select_box, values) {
@@ -327,36 +323,11 @@
             select_box.setAttribute("state", "shown");
         }
 
-        /*---------------------------------------*/
 
 
-        /*SAVE & LOAD SCRIPTS*/
 
-        function save(name) {
-            var file = new File(
-                [editor.getValue()],
-                name,
-                {type: "text/plain;charset=utf8"}
-            );
-            saveAs(file);
-        }
 
-        function load() {
-            var input = document.createElement('input');
-            input.type = 'file';
-            input.onchange = e => {
-               var file = e.target.files[0];
-               var reader = new FileReader();
-               reader.readAsText(file,'UTF-8');
-               reader.onload = readerEvent => {
-                  var content = readerEvent.target.result; // this is the content!
-                  editor.setValue(content, 1);
-               }
-            }
-            input.click();
-        }
 
-        
         /*---------------------------------------*/
 
     </script>
