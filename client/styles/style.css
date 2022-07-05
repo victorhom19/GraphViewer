@@ -250,7 +250,7 @@ header {
 
 .select_body {
     margin: 5px 0 5px 0;
-    width: 100px;
+    width: 120px;
     display: flex;
     flex-direction: column;
     z-index: 999;
