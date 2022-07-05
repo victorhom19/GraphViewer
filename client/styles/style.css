@@ -14,7 +14,13 @@ html, body {
     width: 100%;
     height: 100%;
     font-family: 'Helvetica', 'Arial', sans-serif;
+    user-select: none;
 }
+
+img {
+    pointer-events: none;
+}
+
 
 #wrapper {
     width: 100%;
@@ -66,6 +72,7 @@ header {
     color: white;
     width: 90px;
     line-height: 40px;
+    -webkit-user-drag: none;
 }
 
 .menu_link:hover {
@@ -142,6 +149,7 @@ header {
 }
 
 .content_container_header {
+    max-height: 50px;
     box-sizing: border-box;
     padding: 0 50px 0 50px;
     background: #6E6C78;
@@ -166,7 +174,7 @@ header {
     margin: 5px 0 5px 0;
     width: 100px;
     background: #414047;
-    color: white;
+    color:white;
     text-align: center;
     border:none;
     border-radius: 10px;
@@ -205,6 +213,7 @@ header {
     user-select: none;
 }
 
+
 #graph svg {
     background: white;
     width: 100%;
@@ -229,6 +238,7 @@ header {
 #code, .ace_active-line, .ace_gutter, .ace_gutter-cell {
     transition: 0.3s;
     transition-property: background-color, border, color;
+    user-select: none;
 }
 
 #ThemeIcon {
@@ -236,3 +246,90 @@ header {
     display: block;
     margin: 0;
 }
+
+
+.select_body {
+    margin: 5px 0 5px 0;
+    width: 120px;
+    display: flex;
+    flex-direction: column;
+    z-index: 999;
+    color: black;
+}
+
+
+.select_header {
+    max-height: 40px;
+    background: #414047;
+    color:white;
+    text-align: center;
+    border:none;
+    border-radius: 10px;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 550;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.select_dropdown_icon {
+    width: 15px;
+    margin-right: 5px;
+    filter: invert();
+}
+
+.select_content {
+    display: none;
+    border-radius: 10px;
+    background: #414047;
+    margin: 2px 0 0 0; /* To remove default bottom margin */
+    padding: 0;
+    text-align: center;
+}
+
+.select_current {
+    margin-left:auto;
+    margin-right: auto;
+}
+
+
+.select_content li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0;
+    color:white;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 550;
+
+}
+
+.select_content li:hover {
+    background-color: #2E2E34FF;
+    border-radius: 10px;
+    transition: 0.5s;
+    transition-property: background-color;
+}
+
+#message_panel {
+    margin: 5px;
+    width: 250px;
+    padding: 15px 10px 15px 10px;
+    background: #2E2E34FF;
+    border-radius: 10px;
+    opacity: 80%;
+    color: white;
+    position: absolute;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    text-align: justify;
+    bottom: 0;
+    right: 0;
+    z-index: 999;
+}
+
+
