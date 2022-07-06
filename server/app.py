@@ -6,9 +6,12 @@ from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 import os
 from uuid import uuid4, UUID
+from sqlalchemy.orm import Session
 
 from vk import get_account_info, get_access_token, AccountInfo
 from session import backend, cookie, verifier
+from models import Code
+from db import get_db
 
 from python.handler import handler as py_handler
 from kotlin.handler import handler as kt_handler
@@ -76,9 +79,24 @@ async def del_session(response: Response, session_id: UUID = Depends(cookie)):
     return "exit"
 
 
-@app.get("/save")
-async def save(request: Request):
-    pass
+@app.post("/save", dependencies=[Depends(cookie)], tags=['User'])
+async def save(language: str, code: str, session_data: AccountInfo = Depends(verifier), db: Session = Depends(get_db)):
+    c = Code(language=language, code=code, user_id=session_data.id)
+    try:
+        db.add(c)
+        db.commit()
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
+    return 'ok'
+
+
+@app.get("/code", dependencies=[Depends(cookie)], tags=['User'])
+async def code(session_data: AccountInfo = Depends(verifier), db: Session = Depends(get_db)):
+    all_code = db.query(Code).filter(Code.user_id == session_data.id).all()
+    print(all_code)
+    return all_code
+
+
 
 
 @app.get('/functions')

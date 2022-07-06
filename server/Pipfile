@@ -11,6 +11,8 @@ staticfg = "*"
 docker = "*"
 antlr4-python3-runtime = "*"
 fastapi-sessions = "*"
+sqlalchemy = "*"
+psycopg2 = "*"
 
 [dev-packages]
 
