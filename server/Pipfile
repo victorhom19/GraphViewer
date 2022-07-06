@@ -10,6 +10,7 @@ graphviz = "*"
 staticfg = "*"
 docker = "*"
 antlr4-python3-runtime = "*"
+fastapi-sessions = "*"
 
 [dev-packages]
 

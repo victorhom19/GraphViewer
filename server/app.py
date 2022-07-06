@@ -1,12 +1,14 @@
 from enum import Enum
 
 import uvicorn
-from fastapi import FastAPI, Request, HTTPException, Response, status
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, Request, HTTPException, Response, status, Depends
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 import os
+from uuid import uuid4, UUID
 
-from vk import get_account_info, get_access_token
+from vk import get_account_info, get_access_token, AccountInfo
+from session import backend, cookie, verifier
 
 from python.handler import handler as py_handler
 from kotlin.handler import handler as kt_handler
@@ -48,12 +50,30 @@ async def root(request: Request):
 
 
 @app.get("/vk", tags=['User'])
-async def vk(request: Request, code: str):
+async def vk(code: str):
     code = get_access_token(code)
     if code is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail='Error')
     user = get_account_info(code)
-    return user
+
+    session = uuid4()
+
+    await backend.create(session, user)
+    res = RedirectResponse('/')
+    cookie.attach_to_response(res, session)
+    return res
+
+
+@app.get("/whoami", dependencies=[Depends(cookie)], tags=['User'])
+async def whoami(session_data: AccountInfo = Depends(verifier)):
+    return session_data
+
+
+@app.get("/exit", tags=['User'])
+async def del_session(response: Response, session_id: UUID = Depends(cookie)):
+    await backend.delete(session_id)
+    cookie.delete_from_response(response)
+    return "exit"
 
 
 @app.get("/save")
