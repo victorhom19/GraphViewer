@@ -77,7 +77,6 @@ header {
 
 .menu_link:hover {
     background-color: #597a70;
-    border-radius: 50px;
     transition: 0.3s;
 }
 
@@ -318,7 +317,7 @@ header {
     margin: 5px;
     width: 250px;
     padding: 15px 10px 15px 10px;
-    background: #2E2E34FF;
+    background: #A52A2A;
     border-radius: 10px;
     opacity: 80%;
     color: white;
@@ -332,4 +331,10 @@ header {
     z-index: 999;
 }
 
+#loading_panel {
+    height: 100%;
+    width: 100%;
+    background: red;
+    z-index: 999;
+}
 
