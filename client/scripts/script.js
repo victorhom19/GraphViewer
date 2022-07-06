@@ -50,7 +50,7 @@ function configure_code_section(language) {
         case "C":
             editor.session.setMode(new CMode());
             break
-        case "JavaScript":
+        case "JS":
             editor.session.setMode(new JSMode());
             break
     }
@@ -58,20 +58,22 @@ function configure_code_section(language) {
 
 
 let delayTimer;
-let wait_for_change_delay = 3000;
-let error_message_delay = 5000
+let wait_for_change_delay = 1500;
 function update_graph() {
     let language = get_current(document.getElementById("code_box")).toLowerCase();
     let graph_type = get_current(document.getElementById("graph_box")).toLowerCase();
     let raw_text = editor.getValue();
     let code_text = encodeURIComponent(raw_text);
     let query = `${window.location}view_graph?code=${code_text}&lang=${language}&model=${graph_type}`
-    let message_panel = document.getElementById("message_panel")
+    let message_panel = document.getElementById("message_panel");
+    let loading_panel = document.getElementById("loading_panel");
     clearTimeout(delayTimer);
     message_panel.style.setProperty("display", "none");
     if (raw_text.trim().length !== 0)
         delayTimer = setTimeout(async function () {
+            loading_panel.style.setProperty("display", "block");
             let res = await fetch(query);
+            loading_panel.style.setProperty("display", "none");
             if (res.status !== 200) {
                 d3.select('svg').selectAll('*').remove();
                 message_panel.style.setProperty("display", "flex");
@@ -152,7 +154,6 @@ async function initialize_select() {
     update_graph_select()
     let code_box = document.getElementById('code_box');
     let graph_box = document.getElementById('graph_box');
-    console.log(code_box);
     window.addEventListener('click', function(e){
         if (code_box.contains(e.target)) {
             hide_select_body(graph_box);
