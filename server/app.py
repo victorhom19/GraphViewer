@@ -13,7 +13,7 @@ from java.handler import handler as java_handler
 from javascript.handler import handler as js_handler
 
 functions = {'python': ('ast', 'cfg'), 'kotlin': ('ast', 'cfg'), 'c': ('ast', 'cfg', 'ssa'), 'go': ('ast', 'cfg'),
-             'java': ('ast', 'cfg'), 'javascript': ('ast',)}
+             'java': ('ast', 'cfg'), 'javascript': ('ast', 'cfg')}
 handlers = {"python": py_handler, "kotlin": kt_handler, "c": c_handler, 'go': go_handler, 'java': java_handler,
             'javascript': js_handler}
 
