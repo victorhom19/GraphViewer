@@ -4,8 +4,9 @@ import uvicorn
 from fastapi import FastAPI, Request, HTTPException, Response, status
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-import requests
 import os
+
+from vk import get_account_info, get_access_token
 
 from python.handler import handler as py_handler
 from kotlin.handler import handler as kt_handler
@@ -48,17 +49,11 @@ async def root(request: Request):
 
 @app.get("/vk", tags=['User'])
 async def vk(request: Request, code: str):
-    #return code
-    site = "https://oauth.vk.com/access_token"
-    client_id = os.environ['client_id']
-    secret = os.environ['client_secret']
-    redirect = 'http://localhost:8000/vk'
-    url = f"{site}?client_id={client_id}&client_secret={secret}&redirect_uri={redirect}&code={code}"
-    res = requests.get(url)
-    data: dict = res.json()
-    code = data.get('access_token')
+    code = get_access_token(code)
     if code is None:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail='Error')
+    user = get_account_info(code)
+    return user
 
 
 @app.get("/save")
