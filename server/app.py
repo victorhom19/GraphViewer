@@ -24,15 +24,6 @@ functions = {'python': ('ast', 'cfg'), 'kotlin': ('ast', 'cfg'), 'c': ('ast', 'c
 handlers = {"python": py_handler, "kotlin": kt_handler, "c": c_handler, 'go': go_handler, 'java': java_handler,
             'JS': js_handler}
 
-
-class Format(str, Enum):
-    png = 'image/png'
-    svg = 'image/svg+xml'
-    pdf = 'application/pdf'
-    dot = 'text/dot'
-
-
-
 example_code = """
 a = 2 + 2 * (c * d / 2)
 b = a + a / 2
