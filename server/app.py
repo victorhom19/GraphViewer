@@ -2,7 +2,6 @@ import uvicorn
 from fastapi import FastAPI, Request, HTTPException, Response, status, Depends
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
-import os
 from uuid import uuid4, UUID
 from sqlalchemy.orm import Session
 
@@ -19,9 +18,9 @@ from java.handler import handler as java_handler
 from javascript.handler import handler as js_handler
 
 functions = {'python': ('ast', 'cfg'), 'kotlin': ('ast', 'cfg'), 'c': ('ast', 'cfg', 'ssa'), 'go': ('ast', 'cfg'),
-             'java': ('ast', 'cfg'), 'javascript': ('ast',)}
+             'java': ('ast', 'cfg'), 'JS': ('ast',)}
 handlers = {"python": py_handler, "kotlin": kt_handler, "c": c_handler, 'go': go_handler, 'java': java_handler,
-            'javascript': js_handler}
+            'JS': js_handler}
 
 
 example_code = """
@@ -109,5 +108,4 @@ async def view_graph(code: str = example_code, lang: str = "python", model: str 
 
 
 if __name__ == '__main__':
-    print(os.environ['client_id'])
     uvicorn.run('app:app', host='0.0.0.0', port=8000, reload=True, debug=True)
