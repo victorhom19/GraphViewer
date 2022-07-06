@@ -4,11 +4,13 @@ from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from uuid import uuid4, UUID
 from sqlalchemy.orm import Session
+from typing import List
 
 from vk import get_account_info, get_access_token, AccountInfo
 from session import backend, cookie, verifier
 from models import Code
 from db import get_db
+from schemas import ShortCodeDescription
 
 from python.handler import handler as py_handler
 from kotlin.handler import handler as kt_handler
@@ -21,7 +23,6 @@ functions = {'python': ('ast', 'cfg'), 'kotlin': ('ast', 'cfg'), 'c': ('ast', 'c
              'java': ('ast', 'cfg'), 'JS': ('ast',)}
 handlers = {"python": py_handler, "kotlin": kt_handler, "c": c_handler, 'go': go_handler, 'java': java_handler,
             'JS': js_handler}
-
 
 example_code = """
 a = 2 + 2 * (c * d / 2)
@@ -59,6 +60,7 @@ async def vk(code: str):
 
 @app.get("/whoami", dependencies=[Depends(cookie)], tags=['User'])
 async def whoami(session_data: AccountInfo = Depends(verifier)):
+    """VK user info - id & username"""
     return session_data
 
 
@@ -69,9 +71,9 @@ async def del_session(response: Response, session_id: UUID = Depends(cookie)):
     return "exit"
 
 
-@app.post("/save", dependencies=[Depends(cookie)], tags=['User'])
-async def save(language: str, code: str, session_data: AccountInfo = Depends(verifier), db: Session = Depends(get_db)):
-    c = Code(language=language, code=code, user_id=session_data.id)
+@app.post("/code", dependencies=[Depends(cookie)], tags=['Code'])
+async def save_code(language: str, code: str, description: str, session_data: AccountInfo = Depends(verifier), db: Session = Depends(get_db)):
+    c = Code(description=description, language=language, code=code, user_id=session_data.id)
     try:
         db.add(c)
         db.commit()
@@ -80,11 +82,33 @@ async def save(language: str, code: str, session_data: AccountInfo = Depends(ver
     return 'ok'
 
 
-@app.get("/code", dependencies=[Depends(cookie)], tags=['User'])
-async def code(session_data: AccountInfo = Depends(verifier), db: Session = Depends(get_db)):
+@app.get("/user_code", dependencies=[Depends(cookie)], tags=['Code'], response_model=List[ShortCodeDescription])
+async def all_user_code(session_data: AccountInfo = Depends(verifier), db: Session = Depends(get_db)):
+    """return all saved user code in short format"""
     all_code = db.query(Code).filter(Code.user_id == session_data.id).all()
-    print(all_code)
-    return all_code
+    return [ShortCodeDescription(id=c.id, description=c.description) for c in all_code]
+
+
+@app.get("/сode", dependencies=[Depends(cookie)], tags=['Code'])
+async def code(code_id: int, session_data: AccountInfo = Depends(verifier), db: Session = Depends(get_db)):
+    """return all saved user code in short format"""
+    db_code = db.query(Code).filter(Code.user_id == session_data.id, Code.id == code_id).first()
+    if db_code is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    return db_code
+
+
+@app.delete('/code', dependencies=[Depends(cookie)], tags=['Code'])
+async def delete_code(code_id: int, session_data: AccountInfo = Depends(verifier), db: Session = Depends(get_db)):
+    db_code = db.query(Code).filter(Code.user_id == session_data.id, Code.id == code_id).first()
+    if db_code is None:
+        return Response(status_code=status.HTTP_200_OK)
+    db.delete(db_code)
+    try:
+        db.commit()
+        return Response(status_code=status.HTTP_200_OK)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
 
 
 @app.get('/functions')
