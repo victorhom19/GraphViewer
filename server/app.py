@@ -1,9 +1,11 @@
 from enum import Enum
 
 import uvicorn
-from fastapi import FastAPI, Request, HTTPException, Response
+from fastapi import FastAPI, Request, HTTPException, Response, status
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+import requests
+import os
 
 from python.handler import handler as py_handler
 from kotlin.handler import handler as kt_handler
@@ -42,6 +44,21 @@ app.mount("/client", StaticFiles(directory="../client"), name="client")
 @app.get("/")
 async def root(request: Request):
     return FileResponse('../client/views/index.html')
+
+
+@app.get("/vk", tags=['User'])
+async def vk(request: Request, code: str):
+    #return code
+    site = "https://oauth.vk.com/access_token"
+    client_id = os.environ['client_id']
+    secret = os.environ['client_secret']
+    redirect = 'http://localhost:8000/vk'
+    url = f"{site}?client_id={client_id}&client_secret={secret}&redirect_uri={redirect}&code={code}"
+    res = requests.get(url)
+    data: dict = res.json()
+    code = data.get('access_token')
+    if code is None:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail='Error')
 
 
 @app.get("/save")
@@ -100,4 +117,5 @@ async def view_graph(code: str = example_code, lang: str = "python", model: str 
 
 
 if __name__ == '__main__':
+    print(os.environ['client_id'])
     uvicorn.run('app:app', host='0.0.0.0', port=8000, reload=True, debug=True)
