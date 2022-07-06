@@ -1,5 +1,3 @@
-from enum import Enum
-
 import uvicorn
 from fastapi import FastAPI, Request, HTTPException, Response, status, Depends
 from fastapi.responses import FileResponse, RedirectResponse
@@ -24,13 +22,6 @@ functions = {'python': ('ast', 'cfg'), 'kotlin': ('ast', 'cfg'), 'c': ('ast', 'c
              'java': ('ast', 'cfg'), 'javascript': ('ast',)}
 handlers = {"python": py_handler, "kotlin": kt_handler, "c": c_handler, 'go': go_handler, 'java': java_handler,
             'javascript': js_handler}
-
-
-class Format(str, Enum):
-    png = 'image/png'
-    svg = 'image/svg+xml'
-    pdf = 'application/pdf'
-    dot = 'text/dot'
 
 
 example_code = """
@@ -97,8 +88,6 @@ async def code(session_data: AccountInfo = Depends(verifier), db: Session = Depe
     return all_code
 
 
-
-
 @app.get('/functions')
 async def all_functions():
     """return all available languages and models"""
@@ -117,36 +106,6 @@ async def view_graph(code: str = example_code, lang: str = "python", model: str 
             raise HTTPException(400, detail=str(e))
     else:
         raise HTTPException(400, "Language and model not implemented")
-
-
-# @app.get('/python_ast', response_class=StreamingResponse)
-# async def ast(format: Format, code: str = example_code):
-#     data = python_ast.make(code, format=format.name)
-#     return StreamingResponse(data, media_type=format.value)
-#
-#
-# @app.get('/python_cfg')
-# async def cfg(code: str = example_code):
-#     data = python_cfg.make(code)
-#     return StreamingResponse(data, media_type=f"text/dot")
-#
-
-# @app.get('/c_ssa', response_class=Response)
-# async def c_ssa(code: str = c_handler_.example_code):
-#     try:
-#         data = c_handler_.handler(code, model='ssa')
-#     except RuntimeError as e:
-#         raise HTTPException(400, detail=str(e))
-#     return Response(data, media_type=f"text/dot")
-#
-#
-# @app.get('/c_cfg', response_class=Response)
-# async def c_cfg(code: str = c_handler_.example_code):
-#     try:
-#         data = c_handler_.handler(code, model='cfg')
-#     except RuntimeError as e:
-#         raise HTTPException(400, detail=str(e))
-#     return Response(data, media_type=f"text/dot")
 
 
 if __name__ == '__main__':
