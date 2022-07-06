@@ -91,7 +91,7 @@ async def all_user_code(session_data: AccountInfo = Depends(verifier), db: Sessi
 
 @app.get("/сode", dependencies=[Depends(cookie)], tags=['Code'])
 async def code(code_id: int, session_data: AccountInfo = Depends(verifier), db: Session = Depends(get_db)):
-    """return all saved user code in short format"""
+    """return one source code by id"""
     db_code = db.query(Code).filter(Code.user_id == session_data.id, Code.id == code_id).first()
     if db_code is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
