@@ -45,6 +45,7 @@ graph TD;
 - cfg
 #### 6) javascript
 - ast
+- cfg
 # Установка
 
 ## Требования

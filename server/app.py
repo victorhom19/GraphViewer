@@ -20,9 +20,9 @@ from java.handler import handler as java_handler
 from javascript.handler import handler as js_handler
 
 functions = {'python': ('ast', 'cfg'), 'kotlin': ('ast', 'cfg'), 'c': ('ast', 'cfg', 'ssa'), 'go': ('ast', 'cfg'),
-             'java': ('ast', 'cfg'), 'JS': ('ast',)}
+             'java': ('ast', 'cfg'), 'js': ('ast', 'cfg')}
 handlers = {"python": py_handler, "kotlin": kt_handler, "c": c_handler, 'go': go_handler, 'java': java_handler,
-            'JS': js_handler}
+            'js': js_handler}
 
 example_code = """
 a = 2 + 2 * (c * d / 2)
