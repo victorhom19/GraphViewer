@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker
 import os
 from models import Base
 
+print(os.getenv('db_conn'))
 engine = create_engine(os.getenv('db_conn'), echo=True)
 
 Base.metadata.create_all(engine)
