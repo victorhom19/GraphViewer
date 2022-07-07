@@ -28,10 +28,11 @@
         <header id="header">
             <h1>ModelViewer</h1>
             <nav class="header_menu">
-                <a href="https://oauth.vk.com/oauth/authorize?client_id=8212390&display=page&redirect_uri=http://localhost:8000/vk&response_type=code&v=5.131"
-                class="menu_link">Login</a>
-                <div href="" class="menu_link" onclick="save()">Save</div>
-                <div href="" class="menu_link" onclick="load()">Load</div>
+                <div href="" class="menu_link" onclick="save()" id="save_button">Save</div>
+                <div href="" class="menu_link" onclick="load()" id="load_button">Load</div>
+                <a href="https://oauth.vk.com/oauth/authorize?client_id=8212749&display=page&redirect_uri=http://localhost:8000/vk&response_type=code&v=5.131"
+                class="menu_link" id="login_button">Login</a>
+                <div href="" class="menu_link" id="logout_button" onclick="log_out()">Log Out</div>
             </nav>
         </header>
         <div class="content">
@@ -86,8 +87,18 @@
                 </div>
             </div>
         </div>
-    </div>
 
+    </div>
+    <div id="load_code_panel">
+        <div class="select_body" state='hidden' id="load_box"
+                     onclick="toggle_select(this)">
+                    <div class="select_header">
+                        <span class="select_current"></span>
+                        <img class="select_dropdown_icon" src="/client/images/down-arrow.svg"/>
+                    </div>
+                    <ul class="select_content"></ul>
+        </div>
+    </div>
     <script src="/client/scripts/script.js"></script>
 
 </body>
