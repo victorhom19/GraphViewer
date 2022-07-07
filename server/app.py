@@ -20,9 +20,9 @@ from java.handler import handler as java_handler
 from javascript.handler import handler as js_handler
 
 functions = {'python': ('ast', 'cfg'), 'kotlin': ('ast', 'cfg'), 'c': ('ast', 'cfg', 'ssa'), 'go': ('ast', 'cfg'),
-             'java': ('ast', 'cfg'), 'JS': ('ast', 'cfg')}
+             'java': ('ast', 'cfg'), 'js': ('ast', 'cfg')}
 handlers = {"python": py_handler, "kotlin": kt_handler, "c": c_handler, 'go': go_handler, 'java': java_handler,
-            'JS': js_handler}
+            'js': js_handler}
 
 example_code = """
 a = 2 + 2 * (c * d / 2)
@@ -119,13 +119,9 @@ async def all_functions():
 
 @app.get('/view_graph')
 async def view_graph(code: str = example_code, lang: str = "python", model: str = "ast"):
-    if (lang in functions and model in functions[lang]) or \
-            (lang.upper() in functions and model in functions[lang.upper()]):
+    if lang in functions and model in functions[lang]:
         try:
-            if lang.upper() in functions and model in functions[lang.upper()]:
-                data = handlers.get(lang.upper())(code, model)
-            else:
-                data = handlers.get(lang)(code, model)
+            data = handlers.get(lang)(code, model)
             return Response(data, media_type=f"text/dot")
         except SyntaxError as e:
             raise HTTPException(400, detail=str(e))
