@@ -18,17 +18,20 @@ editor.session.setMode(new PythonMode());
 editor.setShowPrintMargin(false);
 
 function toggle_code_theme(button) {
-    var icon = document.getElementById("ThemeIcon")
+    let icon = document.getElementById("ThemeIcon");
+    let console_content = document.getElementById("console_content");
     if (theme_is_dark) {
         editor.setTheme("ace/theme/cloud9_day");
         icon.src="/client/images/night_light.svg";
         button.style.setProperty("color", "white");
         button.style.setProperty("background", "#414047");
+        console_content.style.setProperty("background", "white");
     } else {
         editor.setTheme("ace/theme/cloud9_night");
         icon.src="/client/images/day_dark.svg";
         button.style.setProperty("color", "#414047");
         button.style.setProperty("background", "white");
+        console_content.style.setProperty("background", "#181819FF");
     }
     theme_is_dark = !theme_is_dark;
 }
@@ -65,10 +68,9 @@ function update_graph() {
     let raw_text = editor.getValue();
     let code_text = encodeURIComponent(raw_text);
     let query = `${window.location}view_graph?code=${code_text}&lang=${language}&model=${graph_type}`
-    let message_panel = document.getElementById("message_panel");
+    let message_panel = document.getElementById("console_content");
     let loading_panel = document.getElementById("loading_panel");
     clearTimeout(delayTimer);
-    message_panel.style.setProperty("display", "none");
     if (raw_text.trim().length !== 0)
         delayTimer = setTimeout(async function () {
             loading_panel.style.setProperty("display", "block");
@@ -76,7 +78,6 @@ function update_graph() {
             loading_panel.style.setProperty("display", "none");
             if (res.status !== 200) {
                 d3.select('svg').selectAll('*').remove();
-                message_panel.style.setProperty("display", "flex");
                 let j = await res.json();
                 message_panel.textContent = j.detail
             } else {
@@ -112,24 +113,28 @@ function setExpandMode(expandMode) {
     let code_label = document.getElementById("code_resizer_label");
     let graph_wrapper = document.getElementById("graph_wrapper");
     let graph_label = document.getElementById("graph_resizer_label");
+    let console_content = document.getElementById("console_content");
     switch (expandMode) {
         case ExpandMode.CODE:
             code_wrapper.style.setProperty("width", "100%");
             code_label.style.removeProperty("color");
             graph_wrapper.style.setProperty("width", "0%");
             graph_label.style.setProperty("color", "white");
+            console_content.style.setProperty("width", "calc(100% - 50px)");
             break
         case ExpandMode.GRAPH:
             code_wrapper.style.setProperty("width", "0%");
             code_label.style.setProperty("color", "white");
             graph_wrapper.style.setProperty("width", "100%");
             graph_label.style.removeProperty("color");
+            console_content.style.setProperty("width", "calc(50% - 25px)");
             break
         case ExpandMode.MIDDLE:
             code_wrapper.style.setProperty("width", "100%");
             code_label.style.removeProperty("color");
             graph_wrapper.style.setProperty("width", "100%");
             graph_label.style.removeProperty("color");
+            console_content.style.setProperty("width", "calc(50% - 25px)");
             break
     }
     currentExpandMode = expandMode;
@@ -313,9 +318,12 @@ async function load_selected_example() {
 }
 
 async function delete_selected_example() {
-    let query = `${window.location}code?code_id=${current_selected_id}`;
-    let res = await fetch(query, {method: 'DELETE'});
-    load();
+    let agree = confirm("Are you sure to delete this code fragment?");
+    if (agree) {
+        let query = `${window.location}code?code_id=${current_selected_id}`;
+        let res = await fetch(query, {method: 'DELETE'});
+        load();
+    }
 }
 
 let load_panel_is_shown= false;
@@ -382,6 +390,17 @@ async function update_log_in_out() {
     }
 }
 
+let is_log_shown = true;
 
-
-/*---------------------------------------*/
+function toggle_console_log() {
+    let console_content = document.getElementById("console_content");
+    let code_content = document.getElementById("code_container");
+    if (is_log_shown) {
+        console_content.style.setProperty("height", "0");
+        code_content.style.setProperty("height", "calc(100% - 40px)");
+    } else {
+        console_content.style.setProperty("height", "calc(0.25 * (100% - 40px))");
+        code_content.style.setProperty("height", "calc(0.75 * (100% - 40px))");
+    }
+    is_log_shown = !is_log_shown;
+}
