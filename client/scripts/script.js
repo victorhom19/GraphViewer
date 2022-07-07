@@ -77,9 +77,11 @@ function update_graph() {
             if (res.status !== 200) {
                 d3.select('svg').selectAll('*').remove();
                 message_panel.style.setProperty("display", "flex");
-                message_panel.textContent = "Can't build model from given code. Please check for syntax errors."
+                let j = await res.json();
+                message_panel.textContent = j.detail
             } else {
                 let js = await res.text();
+                console.log(js);
                 d3.select("#graph").graphviz().renderDot(js);
                 d3.select("#graph").graphviz().scale = 1;
             }
@@ -250,26 +252,77 @@ function show_select_body(select_box) {
 
 /*---------------------------------------*/
 
-function save() {
-    var file = new File(
-        [editor.getValue()],
-        "code.txt",
-        {type: "text/plain;charset=utf8"}
-    );
-    saveAs(file);
+let load_result;
+let load_box = document.getElementById('load_box');
+
+async function save() {
+    var description = prompt("Enter description");
+    let code_box = document.getElementById('code_box');
+    var language = get_current(code_box);
+    let query = `${window.location}code?language=${language}&code=${encodeURI(editor.getValue())}&description=${encodeURI(description)}`;
+    let res = await fetch(query, {method: 'POST'});
+    console.log(res)
 }
 
-function load() {
-    var input = document.createElement('input');
-    input.type = 'file';
-    input.onchange = e => {
-       var file = e.target.files[0];
-       var reader = new FileReader();
-       reader.readAsText(file,'UTF-8');
-       reader.onload = readerEvent => {
-          var content = readerEvent.target.result; // this is the content!
-          editor.setValue(content, 1);
-       }
-    }
-    input.click();
+async function load() {
+    let query = `${window.location}user_code`;
+    await fetch(query)
+        .then((response) => response.json())
+        .then((users_content) => {
+            load_result = users_content;
+    });
+    load_box
+    update_select(load_box, load_result.map(a => a.id));
 }
+
+async function load_selected_example() {
+    let id = get_current(load_box);
+    let query = `${window.location}code?code_id=${id}`;
+    let res = await fetch(query, {method: 'GET'});
+    let result = await res.json();
+    editor.setValue(result.code);
+    let code_box = document.getElementById('code_box');
+    update_current(code_box, result.language);
+}
+
+
+/*LOGIN & LOGOUT SCRIPTS*/
+
+let login_button = document.getElementById("login_button");
+let logout_button = document.getElementById("logout_button");
+let save_button = document.getElementById("save_button");
+let load_button = document.getElementById("load_button");
+
+update_log_in_out()
+
+async function is_logged() {
+    let query = `${window.location}whoami`;
+    let res = await fetch(query);
+    return res.status === 200;
+}
+
+async function log_out() {
+    let query = `${window.location}exit`;
+    let res = await fetch(query);
+    location.reload();
+}
+
+
+async function update_log_in_out() {
+    let current_is_logged = await is_logged();
+    if (current_is_logged) {
+        login_button.style.setProperty("display", "none");
+        logout_button.style.setProperty("display", "block");
+        save_button.style.setProperty("display", "block");
+        load_button.style.setProperty("display", "block");
+    } else {
+        logout_button.style.setProperty("display", "none");
+        login_button.style.setProperty("display", "block");
+        save_button.style.setProperty("display", "none");
+        load_button.style.setProperty("display", "none");
+    }
+}
+
+
+
+/*---------------------------------------*/
