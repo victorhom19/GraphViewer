@@ -8,7 +8,16 @@
 #### 4) Вернуть клиенту представление графа в формате *dot*
 
 ## Код тестировался для python3.10
-
+### Данные хранятся в базе данных
+```bash
+docker run --name pg_modelviewer -p 5432:5432 -e POSTGRES_PASSWORD=1234 -e POSTGRES_USER=USER -e POSTGRES_DB=modelviewer postgres
+```
+### Для работы авторизации VK [нужно создать приложение](https://vk.com/apps?act=manage) и установить адреса в настройках. Еще нужно передать ключи в качестве переменных среды
+```bash
+export client_id=<number>
+export client_secret=<string>
+export db_conn=postgresql+psycopg2://USER:1234@localhost:5432/modelviewer
+```
 ## GUI запуск сервера в pycharm и т.п.
 * Установка всех зависимостей (либо через pip install, либо через GUI среды и тд)
 * Запуск метода main в /server/app.py
