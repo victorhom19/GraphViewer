@@ -217,6 +217,30 @@ function add_option(select_box, option) {
     ul.appendChild(li);
 }
 
+function update_load_select(select_box, values) {
+    clear_select(select_box);
+    add_load_select(select_box, values);
+    if (values.length > 0) update_current(select_box, "Select example");
+    else update_current(select_box, "No examples found");
+}
+
+function add_load_select(select_box, values) {
+    values.forEach(value => add_load_option(select_box, value))
+}
+
+let current_selected_id;
+
+function add_load_option(select_box, option) {
+    var ul = select_box.children[1];
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(option.description));
+    li.addEventListener("click", function () {
+        update_current(select_box, option.description);
+        current_selected_id = option.id;
+    });
+    ul.appendChild(li);
+}
+
 function get_current(select_box) {
     var select_current = select_box.children[0].children[0];
     return select_current.textContent;
@@ -257,11 +281,16 @@ let load_box = document.getElementById('load_box');
 
 async function save() {
     var description = prompt("Enter description");
-    let code_box = document.getElementById('code_box');
-    var language = get_current(code_box);
-    let query = `${window.location}code?language=${language}&code=${encodeURI(editor.getValue())}&description=${encodeURI(description)}`;
-    let res = await fetch(query, {method: 'POST'});
-    console.log(res)
+    if (description.length > 0) {
+        let code_box = document.getElementById('code_box');
+        var language = get_current(code_box);
+        let query = `${window.location}code?language=${language}&code=${encodeURI(editor.getValue())}&description=${encodeURI(description)}`;
+        let res = await fetch(query, {method: 'POST'});
+    } else {
+        alert("Description should not be empty")
+        await save();
+    }
+
 }
 
 async function load() {
@@ -271,19 +300,46 @@ async function load() {
         .then((users_content) => {
             load_result = users_content;
     });
-    load_box
-    update_select(load_box, load_result.map(a => a.id));
+    update_load_select(load_box, load_result);
 }
 
 async function load_selected_example() {
-    let id = get_current(load_box);
-    let query = `${window.location}code?code_id=${id}`;
+    let query = `${window.location}code?code_id=${current_selected_id}`;
     let res = await fetch(query, {method: 'GET'});
     let result = await res.json();
     editor.setValue(result.code);
     let code_box = document.getElementById('code_box');
     update_current(code_box, result.language);
 }
+
+async function delete_selected_example() {
+    let query = `${window.location}code?code_id=${current_selected_id}`;
+    let res = await fetch(query, {method: 'DELETE'});
+    load();
+}
+
+let load_panel_is_shown= false;
+let load_panel = document.getElementById('load_code_panel');
+
+function toggle_load_panel() {
+    if (load_panel_is_shown) {
+        load_panel.style.setProperty('display', 'none');
+    } else {
+        load()
+        load_panel.style.setProperty('display', 'flex');
+    }
+    load_panel_is_shown = !load_panel_is_shown;
+}
+
+window.addEventListener('click', function(e){
+    if (!load_button.contains(e.target) && !load_panel.contains(e.target)) {
+        console.log("hide")
+        load_panel.style.setProperty('display', 'none');
+        load_panel_is_shown = false;
+    }
+});
+
+/*---------------------------------------*/
 
 
 /*LOGIN & LOGOUT SCRIPTS*/
@@ -295,6 +351,8 @@ let load_button = document.getElementById("load_button");
 
 update_log_in_out()
 
+
+
 async function is_logged() {
     let query = `${window.location}whoami`;
     let res = await fetch(query);
@@ -304,7 +362,8 @@ async function is_logged() {
 async function log_out() {
     let query = `${window.location}exit`;
     let res = await fetch(query);
-    location.reload();
+    await update_log_in_out()
+
 }
 
 

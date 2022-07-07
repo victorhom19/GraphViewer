@@ -29,7 +29,7 @@
             <h1>ModelViewer</h1>
             <nav class="header_menu">
                 <div href="" class="menu_link" onclick="save()" id="save_button">Save</div>
-                <div href="" class="menu_link" onclick="load()" id="load_button">Load</div>
+                <div href="" class="menu_link" onclick="toggle_load_panel()" id="load_button">Load</div>
                 <a href="https://oauth.vk.com/oauth/authorize?client_id=8212749&display=page&redirect_uri=http://localhost:8000/vk&response_type=code&v=5.131"
                 class="menu_link" id="login_button">Login</a>
                 <div href="" class="menu_link" id="logout_button" onclick="log_out()">Log Out</div>
@@ -90,11 +90,17 @@
 
     </div>
     <div id="load_code_panel">
-        <div class="select_body" state='hidden' id="load_box"
-                     onclick="toggle_select(this)">
+        <div id="load_code_panel_header">
+            <div id="panel_load_button" onclick="load_selected_example()">
+                Load
+            </div>
+            <div id="panel_delete_button" onclick="delete_selected_example()">
+                Delete
+            </div>
+        </div>
+        <div class="select_body" state='shown' id="load_box">
                     <div class="select_header">
                         <span class="select_current"></span>
-                        <img class="select_dropdown_icon" src="/client/images/down-arrow.svg"/>
                     </div>
                     <ul class="select_content"></ul>
         </div>
